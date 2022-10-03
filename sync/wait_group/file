@@ -1,0 +1,24 @@
+sync是synchronization同步这个词的缩写，所以也会叫做同步包。这里提供了基本同步的操作，比如互斥锁等等。这里除了Once和WaitGroup类型之外，大多数类型都是供低级库例程使用的。更高级别的同步最好通过channel通道和communication通信来完成
+
+一、WaitGroup
+WaitGroup，同步等待组。
+
+在类型上，它是一个结构体。一个WaitGroup的用途是等待一个goroutine的集合执行完成。主goroutine调用了Add()方法来设置要等待的goroutine的数量。然后，每个goroutine都会执行并且执行完成后调用Done()这个方法。与此同时，可以使用Wait()方法来阻塞，直到所有的goroutine都执行完成。
+二、Add()方法：
+Add这个方法，用来设置到WaitGroup的计数器的值。我们可以理解为每个waitgroup中都有一个计数器
+用来表示这个同步等待组中要执行的goroutin的数量。
+
+如果计数器的数值变为0，那么就表示等待时被阻塞的goroutine都被释放，如果计数器的数值为负数，那么就会引发恐慌，程序就报错了。
+三、Done()方法
+Done()方法，就是当WaitGroup同步等待组中的某个goroutine执行完毕后，设置这个WaitGroup的counter数值减1。
+
+其实Done()的底层代码就是调用了Add()方法：
+
+// Done decrements the WaitGroup counter by one.
+func (wg *WaitGroup) Done() {
+wg.Add(-1)
+}
+
+四、Wait()方法
+Wait()方法，表示让当前的goroutine等待，进入阻塞状态。一直到WaitGroup的计数器为零。才能解除阻塞，
+这个goroutine才能继续执行。

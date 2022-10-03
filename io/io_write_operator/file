@@ -1,0 +1,70 @@
+一、io包中的write
+Writer接口的定义，Write()方法用于写出数据。
+
+type Writer interface {
+        Write(p []byte) (n int, err error)
+}
+
+
+Write 将 len§ 个字节从 p 中写入到基本数据流中。它返回从 p 中被写入的字节数n（0 <= n <=
+len§）以及任何遇到的引起写入提前停止的错误。若 Write 返回的n < len§，它就必须返回一个非nil的错误。Write
+不能修改此切片的数据，即便它是临时的。
+
+Seeker接口的定义，封装了基本的 Seek 方法。
+
+type Seeker interface {
+        Seek(offset int64, whence int) (int64, error)
+}
+
+Seeker 用来移动数据的读写指针
+Seek 设置下一次读写操作的指针位置，每次的读写操作都是从指针位置开始的
+whence 的含义：
+如果 whence 为 0：表示从数据的开头开始移动指针
+如果 whence 为 1：表示从数据的当前指针位置开始移动指针
+如果 whence 为 2：表示从数据的尾部开始移动指针
+offset 是指针移动的偏移量
+返回移动后的指针位置和移动过程中遇到的任何错误
+
+
+WriterTo接口的定义，封装了基本的 WriteTo 方法。
+type WriterTo interface {
+        WriteTo(w Writer) (n int64, err error)
+}
+
+
+WriterTo 将对象的数据流写入到 w 中
+直到对象的数据流全部写入完毕或遇到写入错误为止
+返回值 n 是写入的字节数
+返回值 err 就是 w 的返回值 err
+
+定义WriterAt接口，WriterAt 接口封装了基本的 WriteAt 方法
+type WriterAt interface {
+        WriteAt(p []byte, off int64) (n int, err error)
+}
+
+
+WriteAt 将 p 中的数据写入到对象数据流的 off 处
+忽略数据的读写指针，从数据的起始位置偏移 off 处开始写入
+返回写入的字节数和写入时遇到的错误
+如果 n < len§，则必须返回一个 err 值来说明
+为什么没有将 p 完全写入
+
+二、文件写出
+file类是在os包中的，封装了底层的文件描述符和相关信息，同时封装了Read和Write的实现
+
+func (f *File) Write(b []byte) (n int, err error)
+//Write向文件中写入len(b)字节数据。它返回写入的字节数和可能遇到的任何错误。如果返回值n!=len(b)，本方法会返回一个非nil的错误。
+
+func (f *File) WriteString(s string) (ret int, err error)
+//WriteString类似Write，但接受一个字符串参数。
+
+func (f *File) WriteAt(b []byte, off int64) (n int, err error)
+//WriteAt在指定的位置（相对于文件开始位置）写入len(b)字节数据。它返回写入的字节数和可能遇到的任何错误。如果返回值n!=len(b)，本方法会返回一个非nil的错误。
+
+func (f *File) Seek(offset int64, whence int) (ret int64, err error)
+//Seek设置下一次读/写的位置。offset为相对偏移量，而whence决定相对位置：0为相对文件开头，1为相对当前位置，2为相对文件结尾。它返回新的偏移量（相对开头）和可能的错误。
+
+func (f *File) Sync() (err error)
+//Sync递交文件的当前内容进行稳定的存储。一般来说，这表示将文件系统的最近写入的数据在内存中的拷贝刷新到硬盘中稳定保存。
+
+

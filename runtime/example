@@ -1,0 +1,64 @@
+获取goroot和os：
+
+//获取goroot目录：
+fmt.Println("GOROOT-->",runtime.GOROOT())
+
+//获取操作系统
+fmt.Println("os/platform-->",runtime.GOOS) // GOOS--> darwin，mac系统
+
+
+
+
+获取CPU数量，和设置CPU数量：
+func init(){
+    //1.获取逻辑cpu的数量
+    fmt.Println("逻辑CPU的核数：",runtime.NumCPU())
+    //2.设置go程序执行的最大的：[1,256]
+    n := runtime.GOMAXPROCS(runtime.NumCPU())
+    fmt.Println(n)
+}
+
+
+
+Gosched()：
+func main() {
+    go func() {
+        for i := 0; i < 5; i++ {
+            fmt.Println("goroutine。。。")
+        }
+
+    }()
+
+    for i := 0; i < 4; i++ {
+        //让出时间片，先让别的协议执行，它执行完，再回来执行此协程
+        runtime.Gosched()
+        fmt.Println("main。。")
+    }
+}
+
+
+Goexit的使用:
+func main() {
+    //创建新建的协程
+    go func() {
+        fmt.Println("goroutine开始。。。")
+
+        //调用了别的函数
+        fun()
+
+        fmt.Println("goroutine结束。。")
+    }() //别忘了()
+
+    //睡一会儿，不让主协程结束
+    time.Sleep(3*time.Second)
+}
+
+func fun() {
+    defer fmt.Println("defer。。。")
+
+    //return           //终止此函数
+    runtime.Goexit() //终止所在的协程
+
+    fmt.Println("fun函数。。。")
+}
+

@@ -1,0 +1,71 @@
+/O操作也叫输入输出操作。其中I是指Input，O是指Output，用于读或者写数据的，有些语言中也叫流操作，是指数据通信的通道。
+
+Golang 标准库对 IO 的抽象非常精巧，各个组件可以随意组合，可以作为接口设计的典范。
+
+一、io包
+io包中提供I/O原始操作的一系列接口。它主要包装了一些已有的实现，如 os 包中的那些，并将这些抽象成为实用性的功能和一些其他相关的接口。
+
+由于这些接口和原始的操作以不同的实现包装了低级操作，客户不应假定它们对于并行执行是安全的。
+
+在io包中最重要的是两个接口：Reader和Writer接口，首先来介绍这读的操作．
+
+Reader接口的定义，Read()方法用于读取数据。
+
+type Reader interface {
+        Read(p []byte) (n int, err error)
+}
+
+
+Read 将 len(p) 个字节读取到 p 中。它返回读取的字节数 n（0 <= n <= len(p)）以及任何遇到的错误。即使 Read 返回的 n < len(p)，它也会在调用过程中使用 p的全部作为暂存空间。若一些数据可用但不到 len(p) 个字节，Read 会照例返回可用的东西，而不是等待更多。
+
+当 Read 在成功读取 n > 0 个字节后遇到一个错误或 EOF 情况，它就会返回读取的字节数。它会从相同的调用中返回（非nil的）错误或从随后的调用中返回错误（和 n == 0）。这种一般情况的一个例子就是 Reader 在输入流结束时会返回一个非零的字节数，可能的返回不是 err == EOF 就是 err == nil。无论如何，下一个 Read 都应当返回 0, EOF。
+
+调用者应当总在考虑到错误 err 前处理 n > 0 的字节。这样做可以在读取一些字节，以及允许的 EOF 行为后正确地处理I/O错误。
+
+Read 的实现会阻止返回零字节的计数和一个 nil 错误，调用者应将这种情况视作空操作。
+
+
+
+ReaderFrom接口的定义，封装了基本的 ReadFrom 方法。
+type ReaderFrom interface {
+        ReadFrom(r Reader) (n int64, err error)
+}
+
+ReadFrom 从 r 中读取数据到对象的数据流中
+    直到 r 返回 EOF 或 r 出现读取错误为止
+    返回值 n 是读取的字节数
+    返回值 err 就是 r 的返回值 err
+
+
+
+
+定义ReaderAt接口，ReaderAt 接口封装了基本的 ReadAt 方法
+type ReaderAt interface {
+        ReadAt(p []byte, off int64) (n int, err error)
+}
+
+ReadAt 从对象数据流的 off 处读出数据到 p 中
+    忽略数据的读写指针，从数据的起始位置偏移 off 处开始读取
+    如果对象的数据流只有部分可用，不足以填满 p
+    则 ReadAt 将等待所有数据可用之后，继续向 p 中写入
+    直到将 p 填满后再返回
+    在这点上 ReadAt 要比 Read 更严格
+    返回读取的字节数 n 和读取时遇到的错误
+    如果 n < len(p)，则需要返回一个 err 值来说明
+    为什么没有将 p 填满（比如 EOF）
+    如果 n = len(p)，而且对象的数据没有全部读完，则
+    err 将返回 nil
+    如果 n = len(p)，而且对象的数据刚好全部读完，则
+    err 将返回 EOF 或者 nil（不确定）
+
+
+
+二、文件读取
+file类是在os包中的，封装了底层的文件描述符和相关信息，同时封装了Read和Write的实现。
+
+func (f *File) Read(b []byte) (n int, err error)
+//Read方法从f中读取最多len(b)字节数据并写入b。它返回读取的字节数和可能遇到的任何错误。文件终止标志是读取0个字节且返回值err为io.EOF。
+
+func (f *File) ReadAt(b []byte, off int64) (n int, err error)
+//ReadAt从指定的位置（相对于文件开始位置）读取len(b)字节数据并写入b。它返回读取的字节数和可能遇到的任何错误。当n小于len(b)时，本方法总是会返回错误；如果是因为到达文件结尾，返回值err会是io.EOF。
+

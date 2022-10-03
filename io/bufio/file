@@ -1,0 +1,135 @@
+一、bufio包原理
+bufio 是通过缓冲来提高效率。
+
+io操作本身的效率并不低，低的是频繁的访问本地磁盘的文件。所以bufio就提供了缓冲区(分配一块内存)，读和写都先在缓冲区中，最后再读写文件，来降低访问本地磁盘的次数，从而提高效率。
+
+简单的说就是，把文件读取进缓冲（内存）之后再读取的时候就可以避免文件系统的io 从而提高速度。同理，在进行写操作时，先把文件写入缓冲（内存），然后由缓冲写入文件系统。看完以上解释有人可能会表示困惑了，直接把 内容->文件 和 内容->缓冲->文件相比， 缓冲区好像没有起到作用嘛。其实缓冲区的设计是为了存储多次的写入，最后一口气把缓冲区内容写入文件。
+
+
+bufio 封装了io.Reader或io.Writer接口对象，并创建另一个也实现了该接口的对象。
+
+io.Reader或io.Writer 接口实现read() 和 write() 方法，对于实现这个接口的对象都是可以使用这两个方法的。
+
+Reader对象
+
+bufio.Reader 是bufio中对io.Reader 的封装
+// Reader implements buffering for an io.Reader object.
+type Reader struct {
+    buf          []byte
+    rd           io.Reader // reader provided by the client
+    r, w         int       // buf read and write positions
+    err          error
+    lastByte     int // last byte read for UnreadByte; -1 means invalid
+    lastRuneSize int // size of last rune read for UnreadRune; -1 means invalid
+}
+
+
+
+当缓存区有内容的时，将缓存区内容全部填入p并清空缓存区
+当缓存区没有内容的时候且len§>len(buf),即要读取的内容比缓存区还要大，直接去文件读取即可
+当缓存区没有内容的时候且len§<len(buf),即要读取的内容比缓存区小，缓存区从文件读取内容充满缓存区，并将p填满（此时缓存区有剩余内容）
+以后再次读取时缓存区有内容，将缓存区内容全部填入p并清空缓存区（此时和情况1一样）
+
+bufio.Write(p []byte) 的思路如下
+
+判断buf中可用容量是否可以放下 p
+如果能放下，直接把p拼接到buf后面，即把内容放到缓冲区
+如果缓冲区的可用容量不足以放下，且此时缓冲区是空的，直接把p写入文件即可
+如果缓冲区的可用容量不足以放下，且此时缓冲区有内容，则用p把缓冲区填满，把缓冲区所有内容写入文件，并清空缓冲区
+判断p的剩余内容大小能否放到缓冲区，如果能放下（此时和步骤1情况一样）则把内容放到缓冲区
+如果p的剩余内容依旧大于缓冲区，（注意此时缓冲区是空的，情况和步骤3一样）则把p的剩余内容直接写入文件
+
+
+
+
+二、bufio包
+bufio包实现了有缓冲的I/O。它包装一个io.Reader或io.Writer接口对象，创建另一个也实现了该接口，且同时还提供了缓冲和一些文本I/O的帮助函数的对象。
+
+bufio.Reader：
+
+bufio.Reader 实现了如下接口：
+io.Reader
+io.WriterTo
+io.ByteScanner
+io.RuneScanner
+
+// NewReaderSize 将 rd 封装成一个带缓存的 bufio.Reader 对象，
+// 缓存大小由 size 指定（如果小于 16 则会被设置为 16）。
+// 如果 rd 的基类型就是有足够缓存的 bufio.Reader 类型，则直接将
+// rd 转换为基类型返回。
+func NewReaderSize(rd io.Reader, size int) *Reader
+
+// NewReader 相当于 NewReaderSize(rd, 4096)
+func NewReader(rd io.Reader) *Reader
+
+// Peek 返回缓存的一个切片，该切片引用缓存中前 n 个字节的数据，
+// 该操作不会将数据读出，只是引用，引用的数据在下一次读取操作之
+// 前是有效的。如果切片长度小于 n，则返回一个错误信息说明原因。
+// 如果 n 大于缓存的总大小，则返回 ErrBufferFull。
+func (b *Reader) Peek(n int) ([]byte, error)
+
+// Read 从 b 中读出数据到 p 中，返回读出的字节数和遇到的错误。
+// 如果缓存不为空，则只能读出缓存中的数据，不会从底层 io.Reader
+// 中提取数据，如果缓存为空，则：
+// 1、len(p) >= 缓存大小，则跳过缓存，直接从底层 io.Reader 中读
+// 出到 p 中。
+// 2、len(p) < 缓存大小，则先将数据从底层 io.Reader 中读取到缓存
+// 中，再从缓存读取到 p 中。
+func (b *Reader) Read(p []byte) (n int, err error)
+
+// Buffered 返回缓存中未读取的数据的长度。
+func (b *Reader) Buffered() int
+
+// ReadBytes 功能同 ReadSlice，只不过返回的是缓存的拷贝。
+func (b *Reader) ReadBytes(delim byte) (line []byte, err error)
+
+// ReadString 功能同 ReadBytes，只不过返回的是字符串。
+func (b *Reader) ReadString(delim byte) (line string, err error)
+
+...
+
+
+
+
+
+
+
+
+
+bufio.Writer：
+
+bufio.Writer 实现了如下接口：
+io.Writer
+io.ReaderFrom
+io.ByteWriter
+
+// NewWriterSize 将 wr 封装成一个带缓存的 bufio.Writer 对象，
+// 缓存大小由 size 指定（如果小于 4096 则会被设置为 4096）。
+// 如果 wr 的基类型就是有足够缓存的 bufio.Writer 类型，则直接将
+// wr 转换为基类型返回。
+func NewWriterSize(wr io.Writer, size int) *Writer
+
+// NewWriter 相当于 NewWriterSize(wr, 4096)
+func NewWriter(wr io.Writer) *Writer
+
+// WriteString 功能同 Write，只不过写入的是字符串
+func (b *Writer) WriteString(s string) (int, error)
+
+// WriteRune 向 b 写入 r 的 UTF-8 编码，返回 r 的编码长度。
+func (b *Writer) WriteRune(r rune) (size int, err error)
+
+// Flush 将缓存中的数据提交到底层的 io.Writer 中
+func (b *Writer) Flush() error
+
+// Available 返回缓存中未使用的空间的长度
+func (b *Writer) Available() int
+
+// Buffered 返回缓存中未提交的数据的长度
+func (b *Writer) Buffered() int
+
+// Reset 将 b 的底层 Writer 重新指定为 w，同时丢弃缓存中的所有数据，复位
+// 所有标记和错误信息。相当于创建了一个新的 bufio.Writer。
+func (b *Writer) Reset(w io.Writer)
+
+...
+
