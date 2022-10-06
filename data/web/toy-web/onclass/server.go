@@ -10,42 +10,88 @@ import (
 type Server interface {
 	//这是手动创建context的期望
 	//Route(pattern string, handleFunc http.HandlerFunc) //handler func(ResponseWriter, *Request)
-	Route(pattern string, handlerFunc func(ctx *Context))
+
+	//这个是由框架生成context
+	//Route(pattern string, handlerFunc func(ctx *Context))
+
+	//Restfule 风格(其实就是原生库加多个方法)
+	//method+pattern指定一个操作的资源路径
+
+	//Route(method string, pattern string, handlerFunc func(ctx *Context))
+	Routable
 	Start(addr string) error
 }
 
 //基于http库实现(也可以是第三方库)
 type sdkHttpServer struct {
-	Name string //大写也没用
+	Name    string //大写也没用
+	handler Handler
+	root    Filter
 }
 
 //Route路由注册
 //请求路径和处理逻辑方法方法绑定
-func (s *sdkHttpServer) Route(pattern string, handleFunc func(ctx *Context)) {
-	//panic("hi hi")
-	//闭包,调用,匿名
-	http.HandleFunc(pattern, func(writer http.ResponseWriter, request *http.Request) { //注意这里只是函数的形参
-		//函数体
+func (s *sdkHttpServer) Route(
+	method string,
+	pattern string,
+	handleFunc func(ctx *Context)) {
+	s.handler.Route(method, pattern, handleFunc)
+	//注意这样其实并没有解决重复注册
+	//key := s.handler.Key(method, pattern)
+	//s.handler.handlers[key] = handleFunc
 
-		//在这里创建context
-		//ctx:=&Context{
-		//	R:request,
-		//	W:writer,
-		//}
-		ctx := NewContext(writer, request)
-		handleFunc(ctx)
-	})
+	//restful的案例,因为原生的http.HandleFunc()不支持method参数
+	//因为只注册一遍,所以挪到Start那里
+	//http.Handle("/", &HandlerBaseOnMap{}) //第二个参数是interface,我们这里用了自定义的结构体,所以该结构体要实现该接口
+
+	//这里是框架生成context的案例
+	////闭包,调用,匿名
+	//http.HandleFunc(pattern, func(writer http.ResponseWriter, request *http.Request) { //注意这里只是函数的形参
+	//	//函数体
+	//
+	//	//在这里创建context
+	//	//ctx:=&Context{
+	//	//	R:request,
+	//	//	W:writer,
+	//	//}
+	//	ctx := NewContext(writer, request)
+	//	handleFunc(ctx)
+	//})
 }
 
 func (s *sdkHttpServer) Start(addr string) error {
-	//panic("hi hi")
+	//http.Handle("/", &HandlerBaseOnMap{})
+	//handler:=&HandlerBaseOnMap{}
+
+	//用filter了就不是直接handler
+	//http.Handle("/", s.handler)  //server最终是委托给handler,那就看handler文件
+
+	http.Handle("/", func(writer http.ResponseWriter, request *http.Request) {
+		c := NewContext(writer, request)
+		s.root(c) //已经做好了filter链,root里链会自动调用下一个链,当然链是从后往前拼的
+		//比如说这里root是MetricsFilterBuilder,那么next就是下一个处理请求
+	})
 	return http.ListenAndServe(addr, nil)
 }
 
 //返回接口对象
-func NewHttpServer(name string) Server {
+func NewHttpServer(name string, builders ...FilterBuilder) Server {
+	handler := NewHandlerBaseOnMap()
+	//定义个root的filter
+	var root Filter = func(c *Context) {
+		handler.ServeHTTP(c.W, c.R)
+	}
+	//从后往前调用next
+	for i := len(builders); i >= 0; i-- {
+		//从后往前拼成链
+		b := builders[i]
+		root = b(root) //第一个filter就是root这个filter,真正处理请求的filter,如果不传filter就是直接处理请求
+		//当传入filter,就会当做是next调用前一个filter,从后往前串联起来
+	}
 	return &sdkHttpServer{
-		Name: name,
+		Name:    name,
+		handler: handler,
+		root:    root,
 	} //注意返回而是指针,返回实现该接口的对象
 	//return factory() //工厂模式,一种设计模式
 }

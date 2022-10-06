@@ -8,7 +8,7 @@ func main() {
 			fmt.Printf("hello, panic: %v\n", data)
 		}
 		fmt.Println("恢复之后从这里继续执行")
-	}()
+	}() //匿名函数调用
 
 	panic("Boom")
 	fmt.Println("这里将不会执行下来")

@@ -1,0 +1,13 @@
+Http Server:Restful API
+应用于web服务
+定义:符合rest设计风格的web API
+构成部分:
+    1.直观简短资源地址URI
+    2.传输的资源,即web接受和返回的互联网媒体类型,如json,xml,yaml
+    3.对资源的操作,web服务在该资源上支持的一系列的请求方法,如GET,POST,DELETE,PUT
+
+HTTP请求方法在Restful API中的典型应用:(就是http的method决定操作,后边的restful决定资源
+PUT /user 创建用户
+POST /user 更新用户
+GET /user 获取用户
+DELETE /user 删除用户
