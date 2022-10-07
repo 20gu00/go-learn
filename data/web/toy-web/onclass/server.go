@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+//能不用实现类就不用实现类尽量用接口,抽象最直接的体现就是接口
 type Server interface {
 	//这是手动创建context的期望
 	//Route(pattern string, handleFunc http.HandlerFunc) //handler func(ResponseWriter, *Request)

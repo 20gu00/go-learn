@@ -37,7 +37,7 @@ func readBodyOnce(w http.ResponseWriter, r *http.Request) {
 
 func getBodyIsNil(w http.ResponseWriter, r *http.Request) {
 	//GetBody原则上可以重复读,但原生的http.Request默认值是nil
-
+	//一般来说不会读取多次
 	if r.GetBody == nil {
 		fmt.Fprint(w, "GetBody is nil \n")
 	} else {
@@ -46,12 +46,16 @@ func getBodyIsNil(w http.ResponseWriter, r *http.Request) {
 }
 
 func queryParams(w http.ResponseWriter, r *http.Request) {
+	//查询参数
+	//http://ip:port/path?a=b&aa=bb
 	values := r.URL.Query() //map[sting][]string
 	fmt.Fprintf(w, "query is %v\n", values)
 }
 
 func wholeUrl(w http.ResponseWriter, r *http.Request) {
 	//实际上不一定拿得到值,很多事空的,唯一一个百分百拿到的是path
+	//request.URL可能很多字段都是空的
+	//随便加个header测试a-Ba-aa:20
 	data, _ := json.Marshal(r.URL)
 	fmt.Fprintf(w, string(data))
 }
@@ -63,6 +67,7 @@ func header(w http.ResponseWriter, r *http.Request) {
 }
 
 func form(w http.ResponseWriter, r *http.Request) {
+	//form表单,测试时也是使用参数?a=b&aa=bb
 	fmt.Fprintf(w, "before parse form %v\n", r.Form)
 	//使用Form建议加上个hearder Content-Type: application/x-www-form-urlencoded
 	//表单,实际还是用json通信比较多
@@ -70,7 +75,7 @@ func form(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Fprintf(w, "parse form error %v\n", r.Form)
 	}
-	fmt.Fprintf(w, "before parse form %v\n", r.Form)
+	fmt.Fprintf(w, "after parse form %v\n", r.Form)
 }
 
 func main() {
