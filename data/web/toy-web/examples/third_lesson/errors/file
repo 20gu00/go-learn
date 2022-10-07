@@ -1,0 +1,5 @@
+errors包比如New方法创建的错误是一个个存放在内存的错误,是不同的,比如
+type err1 error = error.New("EOF")
+err1==error.New("EOF")  这个判断结果是false
+栈溢出,不可恢复的环境变量问题,索引越界,配置文件没提供,这时候推荐使用panic
+一般推荐使用error
