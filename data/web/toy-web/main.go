@@ -1,5 +1,6 @@
 package main
 
+//导入本地包建议以go.mod所处目录为起点导入,注意导入的是路径
 import (
 	"context"
 	"fmt"
@@ -22,7 +23,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "这是创建用户")
 }
 
-func order(w http.ResponseWriter, r *http.Request)  {
+func order(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "这是订单")
 }
 
@@ -46,7 +47,7 @@ func main() {
 		"demo/static", "/static",
 		web.WithMoreExtension(map[string]string{
 			"mp3": "audio/mp3",
-		}), web.WithFileCache(1 << 20, 100))
+		}), web.WithFileCache(1<<20, 100))
 	// 访问 Get http://localhost:8080/static/forest.png
 	server.Route("GET", "/static/*", staticHandler.ServeStaticResource)
 
@@ -90,7 +91,3 @@ func main() {
 	//web.NewSdkHttpServerWithFilterNames("my-server", filterNames...)
 
 }
-
-
-
-
