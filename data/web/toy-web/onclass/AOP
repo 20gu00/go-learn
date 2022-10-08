@@ -1,3 +1,4 @@
-AOP:横向关注点(切面),一般用于解决鉴权log,tracing,metrics,熔断,限流(跨域)(默认不让跨域,浏览器,即使localhost:8080访问localhost:8081,不管ip还是端口怎样,都跨域了)
+AOP:横向关注点(切面),一般用于解决鉴权log,tracing,metrics,熔断,限流(跨域)(默认不让跨域,浏览器,即使localhost:8080访问localhost:8081,不管ip还是端口怎样不同,都跨域了,而浏览器是不允许这样访问的,需要配置各种Header才行)
 filter:我们一般希望请求真正被处理时先经过一堆filter
 用各种filter实现AOP(责任链)(也叫做middleware interceptor)
+
