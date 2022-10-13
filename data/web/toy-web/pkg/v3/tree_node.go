@@ -39,7 +39,7 @@ type node struct {
 
 	// 原始的 pattern。注意，它不是完整的pattern，
 	// 而是匹配到这个节点的pattern
-	pattern string
+	pattern  string
 	nodeType int
 }
 
@@ -55,11 +55,10 @@ func newStaticNode(path string) *node {
 	}
 }
 
-
 func newRootNode(method string) *node {
 	return &node{
 		children: make([]*node, 0, 2),
-		matchFunc: func( p string, c *Context) bool {
+		matchFunc: func(p string, c *Context) bool {
 			panic("never call me")
 		},
 		nodeType: nodeTypeRoot,
@@ -68,7 +67,7 @@ func newRootNode(method string) *node {
 }
 
 func newNode(path string) *node {
-	if path == "*"{
+	if path == "*" {
 		return newAnyNode()
 	}
 	if strings.HasPrefix(path, ":") {
@@ -120,4 +119,3 @@ func newParamNode(path string) *node {
 //		pattern: path,
 //	}
 //}
-
