@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: in-cluster
+  namespace: default
+spec:
+  containers:
+  - name: in-cluster-container
+    image: in-cluster
+    imagePullPolicy: IfNotPresent

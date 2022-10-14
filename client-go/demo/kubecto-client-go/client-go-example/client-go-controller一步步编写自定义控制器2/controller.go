@@ -78,13 +78,16 @@ func (c *controller) worker() {
 
 func (c *controller) proccessItem() bool {
 	//无限调用这个函数 此函数将从队列中获取值
-	item, shutdown := c.queue.Get() //在队列中获取项目，并关闭
-	if shutdown {
+	item, shutdown := c.queue.Get() //在队列中头部获取项目，并关闭,就是获取到项目并处理,完成后就调用Done()方法
+	if shutdown {                   //即队列中没有item
 		return false //在这种情况关闭是真的，所以我们必须返回false
 		//如果是shutdown是不正确的，我们会将这个对象放入这个函数当中
 	}
 
+	//忘记表示一个项目已经完成了重试。不管是烫发失败还是成功，我们都会停止速率限制器对它的跟踪。这只是清除了`rateLimiter`，你仍然需要在队列上调用`Done`。
 	defer c.queue.Forget(item)
+	//MetaNamespaceKeyFunc是一个方便的默认KeyFunc，它知道如何为实现meta.Interface的API对象制作密钥。密钥使用<namespace>/<name>的格式，除非<namespace>是空的，那么它就只是<name>。
+	//用key-as-struct替换key-as-string，这样就不需要打包/解包了。
 	key, err := cache.MetaNamespaceKeyFunc(item)
 	if err != nil {
 		fmt.Printf("getting key from cache %s\n", err.Error())
@@ -110,6 +113,7 @@ func (c *controller) syncDeployment(ns, name string) error {
 	ctx := context.Background() //创建上下文，并引入模版当中
 	//让我们得到deployment
 	//从命名空间当中列出deplpyment和name
+	//返回一个可以列出和获取Deployments的对象。
 	dep, err := c.depLister.Deployments(ns).Get(name)
 	if err != nil {
 		fmt.Printf("getting deployment from listering %s\n", err.Error())
@@ -127,12 +131,13 @@ func (c *controller) syncDeployment(ns, name string) error {
 		//另外还需要指定端口，以spec当中的规范进行引导定义指定端口
 		Spec: corev1.ServiceSpec{
 			Selector: depLabels(*dep),
-                        Type: corev1.ServiceTypeNodePort,//如果希望是clusterip可以去掉此行
+			Type:     corev1.ServiceTypeNodePort, //如果希望是clusterip可以去掉此行
 			Ports: []corev1.ServicePort{
 				{
 					Name: "http",
 					Port: 80,
-                                        NodePort: 30090,//如果希望是clusterip可以去掉此行
+					//省略掉可以让k8s自动设置端口号
+					//NodePort: 30090, //如果希望是clusterip可以去掉此行
 				},
 			},
 		},
@@ -163,4 +168,3 @@ func (c *controller) handleDel(obj interface{}) { //
 	c.queue.Add(obj) //在队列当中添加此函数
 
 }
-
