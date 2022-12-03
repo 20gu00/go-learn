@@ -1,0 +1,9 @@
+go的database/sql包提供sql和类sql的数据库(pg)的泛用接口(提供了数据库的操作接口),并不提供具体的数据库驱动,
+使用database/sql时必须注入至少一个数据库驱动
+一般都有第三方实现的数据库驱动
+database/sql--数据库驱动--数据库
+
+使用mysql驱动
+go get -u github/com/go-sql-driver/mysql:
+Open(driverName:数据库,dataSourceName:数据源,一般包含数据库名和一些必要信息)
+

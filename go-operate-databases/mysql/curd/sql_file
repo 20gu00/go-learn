@@ -1,0 +1,2 @@
+create table user (id bigint(20) not null auto_increment primary key,name varchar(20) default "",age int(10) default "0")engine=innodb auto_increment=1 default charset=utf8mb4;
+insert into user (name,age) values("a",100);
