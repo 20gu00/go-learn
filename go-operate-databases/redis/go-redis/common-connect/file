@@ -1,0 +1,2 @@
+go-redis适用于哨兵和集群模式的redis
+go get github.com/go-redis/redis

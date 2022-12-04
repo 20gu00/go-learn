@@ -98,13 +98,40 @@ func main() {
 		fmt.Println("获取最后一次记录的id失败", err)
 		return
 	}
-	fmt.Println("最后一次记录的id", theID)
+	fmt.Println("最后一次记录的id--", theID)
 
-	//nameExec
+	//namedExec
 	_, err = DB.NamedExec("insert into user(name,age) values(:name,:age)",
 		map[string]interface{}{
 			"name": "aa",
 			"age":  100,
 		})
 
+	//namedQuery
+	//``
+	sqlStr = "select id,name,age from user where name=:name"
+	rows, err := DB.NamedQuery(sqlStr,
+		map[string]interface{}{
+			"name": "aa",
+		})
+
+	if err != nil {
+		fmt.Println("namedQuery failed", err)
+		return
+	}
+	defer rows.Close() //关闭连接
+	for rows.Next() {
+		u3 := new(User)
+		//最好处理scan的错误
+		rows.StructScan(u3) //最好指针  MapScan SliceScan
+		fmt.Println(u3.ID)
+	}
+
+	//第二种写法
+	u4 := new(User)
+	rows, err = DB.NamedQuery(sqlStr, u4)
+	fmt.Println(u4)
+
+	//上面是案例演示,注意不要这样写,最好每个增删改查分装成一个函数来调用,这样避免共用一个连接,共用一个连接时往往查询会有问题,查到的数据都是零值
+	//最好每个增删改查分装成一个函数来调用
 }

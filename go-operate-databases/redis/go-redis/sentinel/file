@@ -1,0 +1,2 @@
+Sentinel(哨兵)是用于监控Redis集群中Master状态的工具，是Redis高可用解决方案，哨兵可以监视一个或者多个redis master服务，以及这些master服务的所有从服务。 某个master服务宕机后，会把这个master下的某个从服务升级为master来替代已宕机的master继续工作。
+(即使后来之前的master重启服务，也不会变回master了，而是作为slave从服务)
