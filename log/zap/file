@@ -1,0 +1,4 @@
+zap性能非常好,处理非常快,但是配置相对logrus麻烦
+go get go.uber.org/zap
+Logger比SugaredLogger更快的,但不支持结构化
+zap.NewProduction(默认会急了函数调用信息,日期,时间) NewDevelopment Example都可以创建Logger
