@@ -1,0 +1,4 @@
+平时我们会使用database/sql来连接数据库,sqlx是go内置的database/sql的超集,进行了扩展,功能更强大
+go get github.com/jmoiron/sqlx
+文件夹命名注意规范,比如使用mod时候,尤其是设置了GOPATH的,会找到不合适的同名的包(如果使用的是ide,不仅GO111MODULE变量开启,ide也要开启mod,不然默认使用GOPATH也就是src)
+同事最好将GOPATH/src下的包删了,要将根源的包也删除了(也可以将代码包git clone下来到这里)
