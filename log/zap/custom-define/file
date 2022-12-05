@@ -1,0 +1,5 @@
+zap本身不具有切割归档的功能
+使用Lumberjack来实现
+go get github.com/natefinch/lumberjack
+json格式日志方便收集
+只需要修改写出日志的地方

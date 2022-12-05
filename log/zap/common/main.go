@@ -28,7 +28,7 @@ func main() {
 }
 
 func InitLogger() {
-	Logger, _ = zap.NewProduction()
+	Logger, _ = zap.NewProduction() //使用默认配置
 
 	//如果要的是SugarLogger
 	SugerLogger = Logger.Sugar()
