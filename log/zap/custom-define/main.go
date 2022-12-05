@@ -68,6 +68,7 @@ func getLogWriter() zapcore.WriteSyncer {
 	//return zapcore.AddSync(file)
 
 	//LumberJack
+	//备份文件名加了时间戳
 	lumberjack := &lumberjack.Logger{
 		Filename:   "./zap.log",
 		MaxSize:    10, //m

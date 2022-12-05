@@ -1,0 +1,1 @@
+2022-12-06T00:54:57.254+0800	info	gin-zap/main.go:57	/ping	{"status": 200, "method": "GET", "path": "/ping", "query": "", "ip": "127.0.0.1", "user-agent": "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0", "error": "", "cost": 0.000054283}
