@@ -7,3 +7,25 @@ create database test charset=utf8mb4
 
 
 文件夹用横线，文件用下划线，变量用驼峰
+
+gorm:"column:create_at"
+gorm:"type:varchar(100);unique_index"
+gorm:"size:255"
+gorm:"unique;not null"
+gorm:"AUTO_INCREMENT"
+grom:"index:addr"  给字段创建一个名为addr的索引
+gorm:"-"  忽略,只在代码中使用该字段
+
+
+CreatedAt
+
+
+model模型
+
+一对一
+
+
+
+一对多:
+hash many
+比如一个人可以拥有多张银行卡

@@ -1,0 +1,32 @@
+自定义外键
+type User struct {
+	gorm.Model
+	Username string
+	//或者指针
+	CreditCards []*CreditCard  `gorm:"foreignKey:OwnDefine"`
+}
+
+// 多
+type CreditCard struct {
+	gorm.Model
+	Number string
+	OwnDefine uint  //类型还是uint,对应的主键还是user的id
+}
+
+
+
+
+//使用别的唯一键来关联外键
+type User struct {
+	gorm.Model
+	Username string
+	//或者指针
+	CreditCards []*CreditCard  `gorm:"foreignKey:OwnDefine;association_foreignkey:Username"`
+}
+
+// 多
+type CreditCard struct {
+	gorm.Model
+	Number string
+	OwnDefine string  //类型
+}

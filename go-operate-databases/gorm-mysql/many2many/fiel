@@ -1,0 +1,53 @@
+多对多 三张表 中间表
+A表 id a aa
+B表 id b b
+C表 id a_id b_id 或者 a_id b_id(联合组建)
+也就是在两个mode之间添加一张中间表
+
+
+
+使用automigrate会自动创建中间表
+
+//User_Language
+
+// 1
+type User struct {
+	gorm.Model
+	Languages []*Language `gorm:"many2many:user_languages"`
+}
+
+type Language struct {
+	gorm.Model
+	Name  string
+}
+
+
+
+
+// 2
+type User struct {
+	gorm.Model
+	Languages []*Language `gorm:"many2many:user_languages"`
+}
+
+type Language struct {
+	gorm.Model
+	Name  string
+	Users []*User `gorm:"many2many:user_languages"`
+}
+
+多对多和一对多重写外键一样
+type User struct {
+	gorm.Model
+	Profile []*Profile `gorm:"many2many:user_languages;foreignkey:Refer;joinForeignKey:UserReferID;References:UserRefer;joinRefernces:ProfileRefer"`
+    Refer uint  `gorm:"index:;unique"`
+}
+
+type Profile struct {
+	gorm.Model
+	Name  string
+	UserRefer []*User `gorm:"index:;unique"`
+}
+
+//foreign key:user_refer_id,reference:user.refer
+//foreign key:profile_refer,reference:profiles.user._refer
