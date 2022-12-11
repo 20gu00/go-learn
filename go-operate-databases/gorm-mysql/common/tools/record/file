@@ -1,0 +1,9 @@
+orm:object relational mapping  对象映射关系
+方便使用,使用对象操作数据库而不是直接使用sql
+gorm
+https://github.com/go-gorm/gorm
+create database test charset=utf8mb4
+
+
+
+文件夹用横线，文件用下划线，变量用驼峰
