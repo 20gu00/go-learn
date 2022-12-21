@@ -7,6 +7,7 @@
 4. gorm sqlx操作mysql
 5. go-redis操作redis
 6. viper处理配置文件
-8. zap logrus处理日志
-9. grpc, 序列化和反序列化
-10. Gin框架的知识
+7. zap logrus处理日志
+8. grpc, 序列化和反序列化
+9. Gin框架的知识
+10. go实现的OOP
