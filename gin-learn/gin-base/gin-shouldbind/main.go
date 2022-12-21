@@ -10,6 +10,8 @@ type Login struct {
 	Password string `json:"password" binding:"required" form:"password"`
 }
 
+// form json都可以搭配各种bind使用
+// form搭配bind等,其实就是类似? c.Query
 func LoginHandler(c *gin.Context) {
 	// 初始化,不初始化,结构体的零值是个成员的零值,复合类型
 	login := &Login{}
