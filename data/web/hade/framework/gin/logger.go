@@ -56,11 +56,11 @@ type LogFormatter func(params LogFormatterParams) string
 type LogFormatterParams struct {
 	Request *http.Request
 
-	// TimeStamp shows the time after the server returns a response.
+	// TimeStamp shows the time after the service returns a response.
 	TimeStamp time.Time
 	// StatusCode is HTTP response code.
 	StatusCode int
-	// Latency is how much time the server cost to process a certain request.
+	// Latency is how much time the service cost to process a certain request.
 	Latency time.Duration
 	// ClientIP equals Context's ClientIP method.
 	ClientIP string

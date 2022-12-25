@@ -1689,7 +1689,7 @@ func router01() http.Handler {
 			http.StatusOK,
 			gin.H{
 				"code":  http.StatusOK,
-				"error": "Welcome server 01",
+				"error": "Welcome service 01",
 			},
 		)
 	})
@@ -1705,7 +1705,7 @@ func router02() http.Handler {
 			http.StatusOK,
 			gin.H{
 				"code":  http.StatusOK,
-				"error": "Welcome server 02",
+				"error": "Welcome service 02",
 			},
 		)
 	})
@@ -1804,7 +1804,7 @@ func main() {
 		Handler: router,
 	}
 
-	// Initializing the server in a goroutine so that
+	// Initializing the service in a goroutine so that
 	// it won't block the graceful shutdown handling below
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
@@ -1812,7 +1812,7 @@ func main() {
 		}
 	}()
 
-	// Wait for interrupt signal to gracefully shutdown the server with
+	// Wait for interrupt signal to gracefully shutdown the service with
 	// a timeout of 5 seconds.
 	quit := make(chan os.Signal)
 	// kill (no param) default send syscall.SIGTERM
@@ -1820,9 +1820,9 @@ func main() {
 	// kill -9 is syscall.SIGKILL but can't be catch, so don't need add it
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	log.Println("Shutting down server...")
+	log.Println("Shutting down service...")
 
-	// The context is used to inform the server it has 5 seconds to finish
+	// The context is used to inform the service it has 5 seconds to finish
 	// the request it is currently handling
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -2045,7 +2045,7 @@ func main() {
 
 	r.GET("/", func(c *gin.Context) {
 		if pusher := c.Writer.Pusher(); pusher != nil {
-			// use pusher.Push() to do server push
+			// use pusher.Push() to do service push
 			if err := pusher.Push("/assets/app.js", nil); err != nil {
 				log.Printf("Failed to push: %v", err)
 			}
@@ -2056,7 +2056,7 @@ func main() {
 	})
 
 	// Listen and Server in https://127.0.0.1:8080
-	r.RunTLS(":8080", "./testdata/server.pem", "./testdata/server.key")
+	r.RunTLS(":8080", "./testdata/service.pem", "./testdata/service.key")
 }
 ```
 

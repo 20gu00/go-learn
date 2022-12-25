@@ -1866,7 +1866,7 @@ func TestWebsocketsRequired(t *testing.T) {
 	// Example request from spec: https://tools.ietf.org/html/rfc6455#section-1.2
 	c, _ := CreateTestContext(httptest.NewRecorder())
 	c.Request, _ = http.NewRequest("GET", "/chat", nil)
-	c.Request.Header.Set("Host", "server.example.com")
+	c.Request.Header.Set("Host", "service.example.com")
 	c.Request.Header.Set("Upgrade", "websocket")
 	c.Request.Header.Set("Connection", "Upgrade")
 	c.Request.Header.Set("Sec-WebSocket-Key", "dGhlIHNhbXBsZSBub25jZQ==")
@@ -1879,7 +1879,7 @@ func TestWebsocketsRequired(t *testing.T) {
 	// Normal request, no websocket required.
 	c, _ = CreateTestContext(httptest.NewRecorder())
 	c.Request, _ = http.NewRequest("GET", "/chat", nil)
-	c.Request.Header.Set("Host", "server.example.com")
+	c.Request.Header.Set("Host", "service.example.com")
 
 	assert.False(t, c.IsWebsocket())
 }

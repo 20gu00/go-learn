@@ -23,7 +23,7 @@ func order(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	//自己封装路由注册
-	Server := NewHttpServer("test-server")
+	Server := NewHttpServer("test-service")
 	//Server.Route("/", home)
 	//Server.Route("/user", user)
 	//可以看到这种API不限制方法Get Put Delete Post

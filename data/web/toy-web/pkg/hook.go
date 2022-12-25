@@ -13,7 +13,7 @@ import (
 type Hook func(ctx context.Context) error
 
 // BuildCloseServerHook 这里其实可以考虑使用 errgroup，
-// 但是我们这里不用是希望每个 server 单独关闭
+// 但是我们这里不用是希望每个 service 单独关闭
 // 互相之间不影响
 //这里构造了一个hook的builder函数
 func BuildCloseServerHook(servers ...Server) Hook {
@@ -26,7 +26,7 @@ func BuildCloseServerHook(servers ...Server) Hook {
 			go func(svr Server) {
 				err := svr.Shutdown(ctx)
 				if err != nil {
-					fmt.Printf("server shutdown error: %v \n", err)
+					fmt.Printf("service shutdown error: %v \n", err)
 				}
 				time.Sleep(time.Second)
 				wg.Done() //最好在goroutine中关

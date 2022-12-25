@@ -29,9 +29,9 @@ func order(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	shutdown := web.NewGracefulShutdown()
-	server := web.NewSdkHttpServer("my-test-server",
+	server := web.NewSdkHttpServer("my-test-service",
 		web.MetricFilterBuilder, shutdown.ShutdownFilterBuilder)
-	adminServer := web.NewSdkHttpServer("admin-test-server",
+	adminServer := web.NewSdkHttpServer("admin-test-service",
 		// 注意，如果你真实环境里面，使用的是多个 server监听不同端口，
 		// 那么这个 shutdown最好也是多个。互相之间就不会有竞争
 		// MetricFilterBuilder 是无状态的，所以不存在这种问题
@@ -66,7 +66,7 @@ func main() {
 	}()
 
 	// 先执行 RejectNewRequestAndWaiting，等待所有的请求
-	// 然后我们关闭 server，如果是多个 server，可以多个 goroutine 一起关闭
+	// 然后我们关闭 service，如果是多个 service，可以多个 goroutine 一起关闭
 	//
 	web.WaitForShutdown(
 		func(ctx context.Context) error {
@@ -88,6 +88,6 @@ func main() {
 
 	// filterNames := ReadFromConfig
 	// 匿名引入之后，就可以在这里按名索引 filter
-	//web.NewSdkHttpServerWithFilterNames("my-server", filterNames...)
+	//web.NewSdkHttpServerWithFilterNames("my-service", filterNames...)
 
 }

@@ -220,11 +220,11 @@ var cronStateCommand = &cobra.Command{
 				return err
 			}
 			if util.CheckProcessExist(pid) {
-				fmt.Println("cron server started, pid:", pid)
+				fmt.Println("cron service started, pid:", pid)
 				return nil
 			}
 		}
-		fmt.Println("no cron server start")
+		fmt.Println("no cron service start")
 		return nil
 	},
 }

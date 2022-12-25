@@ -80,7 +80,7 @@ type Context struct {
 	// or PUT body parameters.
 	formCache url.Values
 
-	// SameSite allows a server to define a cookie attribute making it impossible for
+	// SameSite allows a service to define a cookie attribute making it impossible for
 	// the browser to send this cookie along with cross-site requests.
 	sameSite http.SameSite
 }
@@ -944,7 +944,7 @@ func (c *Context) SecureJSON(code int, obj interface{}) {
 }
 
 // JSONP serializes the given struct as JSON into the response body.
-// It adds padding to response body to request data from a server residing in a different domain than the client.
+// It adds padding to response body to request data from a service residing in a different domain than the client.
 // It also sets the Content-Type as "application/javascript".
 func (c *Context) JSONP(code int, obj interface{}) {
 	callback := c.DefaultQuery("callback", "")
@@ -1106,7 +1106,7 @@ func (c *Context) Negotiate(code int, config Negotiate) {
 		c.YAML(code, data)
 
 	default:
-		c.AbortWithError(http.StatusNotAcceptable, errors.New("the accepted formats are not offered by the server")) // nolint: errcheck
+		c.AbortWithError(http.StatusNotAcceptable, errors.New("the accepted formats are not offered by the service")) // nolint: errcheck
 	}
 }
 

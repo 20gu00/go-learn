@@ -1,0 +1,190 @@
+gRPC是是什么什么
+gRPC是goole开源的一个RPC框架和库，支持多语言之间的通信。底层通信采用的是 HTTP2 协议。gRPC在设计上使用
+了 ProtoBuf 这种接口描述语言。这种IDL语言可以定义各种服务，google还提供了一种工具 protoc 来编译这种
+IDL语言，生成各种各样的语言来操作服务。
+
+gRPC特点
+定义服务简单，可以很快的搭建出一个RPC调度的服务
+gRPC是与语言无关，平台无关的。你定义好了一个protobuf协议，就可以用protoc生成不同语言的协议框架
+使用HTTP2协议，支持双向流。客户端和服务端可以双向通信
+
+RPC与RESTful区别是什么 区别是什么
+在客户端和服务端通信还有一种基于http协议的 RESTful 架构模式，RESTful一般是对于资源的操作，它是名词（资
+源地址），然后添加一些动作对这些资源进行操作。而RPC是基于函数，它是动词。
+RPC一般基于TCP协议，当然gRPC是基于HTTP2，但它也是比HTTP协议更加有效率和更多特性。RESTful一般都是基于
+HTTP协议。
+传输方面：自定义的TCP协议或者使用HTTP2协议，报文体积更小，所以传输效率更高，RESTful一般基于http协议，
+报文体积大。
+gRPC用的是protobuf的IDL语言，会编码为二进制协议的数据，而RESTful一般是用json的数据格式，json格式的编
+解码更耗时。
+远程调用,如同本地调用一般使用方法
+
+rpc(tcp grpc(http)) protobuf编解码 数据格式二进制 多一步数据要格式化成json使用
+restful(http) json编解码 数据格式json
+
+
+生成message.pb.go、message_grpc.pb.go这两个文件。在这两个文件中，包含了我们定义方法的go语言实
+现，也包含了我们定义的请求与响应的go语言实现。
+protoc "(go_out=. message.proto
+protoc "(go-grpc_out=. message.proto
+
+
+
+// Filename: addressbook.proto
+
+ syntax="proto2";
+ package addressbook;
+
+ import "src/help.proto";      //举例用，编译时去掉
+
+ message Person {
+     required string name = 1;
+     required int32 id = 2;
+     optional string email = 3;
+
+     enum PhoneType {
+         MOBILE = 0;
+         HOME = 1;
+         WORK = 2;
+     }
+
+     message PhoneNumber {
+         required string number = 1;
+         optional PhoneType type = 2 [default = HOME];
+     }
+
+     repeated PhoneNumber phone = 4;
+ }
+
+ message AddressBook {
+     repeated Person person_info = 1;
+}
+2. 代码解释
+ // Filename: addressbook.proto 这一行是注释，语法类似于C++
+
+
+
+ syntax="proto2"; 表明使用protobuf的编译器版本为v2，目前最新的版本为v3
+
+
+
+ package addressbook; 声明了一个包名，用来防止不同的消息类型命名冲突，类似于 namespace
+
+
+
+ import "src/help.proto";  导入了一个外部proto文件中的定义，类似于C++中的 include 。不过好像只能import当前目录及当前目录的子目录中的proto文件，比如import父目录中的文件时编译会报错（Import "../xxxx.proto" was not found or had errors.），使用绝对路径也不行，尚不清楚原因，官方文档说使用 -I=PATH 或者 --proto_path=PATH 来指定import目录，但实际实验结果表明这两种方式指定的是将要编译的proto文件所在的目录，而不是import的文件所在的目录。
+
+
+
+ message 是Protobuf中的结构化数据，类似于C++中的类，可以在其中定义需要处理的数据
+
+
+
+ required string name = 1; 声明了一个名为name，数据类型为string的required字段，字段的标识号为1
+
+
+
+protobuf一共有三个字段修饰符：
+
+       - required：该值是必须要设置的；
+
+        - optional ：该字段可以有0个或1个值（不超过1个）；
+
+       - repeated：该字段可以重复任意多次（包括0次），类似于C++中的list；
+
+
+
+使用建议：除非确定某个字段一定会被设值，否则使用optional代替required。
+
+
+
+ string 是一种标量类型，protobuf的所有标量类型请参考文末的标量类型列表。
+
+
+
+ name 是字段名，1 是字段的标识号，在消息定义中，每个字段都有唯一的一个数字标识号，这些标识号是用来在消息的二进制格式中识别各个字段的，一旦开始使用就不能够再改变。标识号的范围在：1 ~ 229 - 1，其中[19000－19999]为Protobuf预留，不能使用。
+
+
+
+ Person 内部声明了一个enum和一个message，这类似于C++中的类内声明，Person外部的结构可以用 Person.PhoneType 的方式来使用PhoneType。当使用外部package中的结构时，要使用 pkgName.msgName.typeName 的格式，每两层之间使用'.'来连接，类似C++中的"::"。
+
+
+
+ optional PhoneType type = 2 [default = HOME]; 为type字段指定了一个默认值，当没有为type设值时，其值为HOME。
+另外，一个proto文件中可以声明多个message，在编译的时候他们会被编译成为不同的类。
+
+
+
+3. 生成C++文件
+　　protoc是proto文件的编译器，目前可以将proto文件编译成C++、Java、Python三种代码文件，编译格式如下：
+                            protoc -I=$SRC_DIR --cpp_out=$DST_DIR /path/to/file.proto
+        上面的命令会生成xxx.pb.h 和 xxx.pb.cc两个C++文件。
+
+
+
+4. C++文件使用
+　　现在编写一个main.cc文件：
+
+#include <iostream>
+#include "addressbook.pb.h"
+
+int main(int argc, const char* argv[])
+{
+    addressbook::AddressBook person;
+    addressbook::Person* pi = person.add_person_info();
+
+    pi->set_name("aut");
+    pi->set_id(1219);
+    std::cout << "before clear(), id = " << pi->id() << std::endl;
+    pi->clear_id();
+    std::cout << "after  clear(), id = " << pi->id() << std::endl;
+    pi->set_id(1087);
+    if (!pi->has_email())
+        pi->set_email("autyinjing@126.com");
+
+    addressbook::Person::PhoneNumber* pn = pi->add_phone();
+    pn->set_number("021-8888-8888");
+    pn = pi->add_phone();
+    pn->set_number("138-8888-8888");
+    pn->set_type(addressbook::Person::MOBILE);
+
+    uint32_t size = person.ByteSize();
+    unsigned char byteArray[size];
+    person.SerializeToArray(byteArray, size);
+
+    addressbook::AddressBook help_person;
+    help_person.ParseFromArray(byteArray, size);
+    addressbook::Person help_pi = help_person.person_info(0);
+
+    std::cout << "*****************************" << std::endl;
+    std::cout << "id:    " << help_pi.id() << std::endl;
+    std::cout << "name:  " << help_pi.name() << std::endl;
+    std::cout << "email: " << help_pi.email() << std::endl;
+
+    for (int i = 0; i < help_pi.phone_size(); ++i)
+    {
+        auto help_pn = help_pi.mutable_phone(i);
+        std::cout << "phone_type: " << help_pn->type() << std::endl;
+        std::cout << "phone_number: " << help_pn->number() << std::endl;
+    }
+    std::cout << "*****************************" << std::endl;
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+服务端接收请求 返回相应给客户端使用

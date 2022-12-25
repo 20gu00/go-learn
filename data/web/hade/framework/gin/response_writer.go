@@ -39,7 +39,7 @@ type ResponseWriter interface {
 	// Forces to write the http header (status code + headers).
 	WriteHeaderNow()
 
-	// get the http.Pusher for server push
+	// get the http.Pusher for service push
 	Pusher() http.Pusher
 }
 

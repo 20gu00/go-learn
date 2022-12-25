@@ -68,7 +68,7 @@ func TestRunEmpty(t *testing.T) {
 		router.GET("/example", func(c *Context) { c.String(http.StatusOK, "it worked") })
 		assert.NoError(t, router.Run())
 	}()
-	// have to wait for the goroutine to start and run the server
+	// have to wait for the goroutine to start and run the service
 	// otherwise the main thread will complete
 	time.Sleep(5 * time.Millisecond)
 
@@ -91,7 +91,7 @@ func TestRunTLS(t *testing.T) {
 		assert.NoError(t, router.RunTLS(":8443", "./testdata/certificate/cert.pem", "./testdata/certificate/key.pem"))
 	}()
 
-	// have to wait for the goroutine to start and run the server
+	// have to wait for the goroutine to start and run the service
 	// otherwise the main thread will complete
 	time.Sleep(5 * time.Millisecond)
 
@@ -128,7 +128,7 @@ func TestPusher(t *testing.T) {
 		assert.NoError(t, router.RunTLS(":8449", "./testdata/certificate/cert.pem", "./testdata/certificate/key.pem"))
 	}()
 
-	// have to wait for the goroutine to start and run the server
+	// have to wait for the goroutine to start and run the service
 	// otherwise the main thread will complete
 	time.Sleep(5 * time.Millisecond)
 
@@ -143,7 +143,7 @@ func TestRunEmptyWithEnv(t *testing.T) {
 		router.GET("/example", func(c *Context) { c.String(http.StatusOK, "it worked") })
 		assert.NoError(t, router.Run())
 	}()
-	// have to wait for the goroutine to start and run the server
+	// have to wait for the goroutine to start and run the service
 	// otherwise the main thread will complete
 	time.Sleep(5 * time.Millisecond)
 
@@ -164,7 +164,7 @@ func TestRunWithPort(t *testing.T) {
 		router.GET("/example", func(c *Context) { c.String(http.StatusOK, "it worked") })
 		assert.NoError(t, router.Run(":5150"))
 	}()
-	// have to wait for the goroutine to start and run the server
+	// have to wait for the goroutine to start and run the service
 	// otherwise the main thread will complete
 	time.Sleep(5 * time.Millisecond)
 
@@ -183,7 +183,7 @@ func TestUnixSocket(t *testing.T) {
 		router.GET("/example", func(c *Context) { c.String(http.StatusOK, "it worked") })
 		assert.NoError(t, router.RunUnix(unixTestSocket))
 	}()
-	// have to wait for the goroutine to start and run the server
+	// have to wait for the goroutine to start and run the service
 	// otherwise the main thread will complete
 	time.Sleep(5 * time.Millisecond)
 
@@ -219,7 +219,7 @@ func TestFileDescriptor(t *testing.T) {
 		router.GET("/example", func(c *Context) { c.String(http.StatusOK, "it worked") })
 		assert.NoError(t, router.RunFd(int(socketFile.Fd())))
 	}()
-	// have to wait for the goroutine to start and run the server
+	// have to wait for the goroutine to start and run the service
 	// otherwise the main thread will complete
 	time.Sleep(5 * time.Millisecond)
 
@@ -251,7 +251,7 @@ func TestListener(t *testing.T) {
 		router.GET("/example", func(c *Context) { c.String(http.StatusOK, "it worked") })
 		assert.NoError(t, router.RunListener(listener))
 	}()
-	// have to wait for the goroutine to start and run the server
+	// have to wait for the goroutine to start and run the service
 	// otherwise the main thread will complete
 	time.Sleep(5 * time.Millisecond)
 

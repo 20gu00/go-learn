@@ -29,7 +29,7 @@ func main() {
 	//}
 
 	InitLogger()
-	r := gin.New() //没有自带中间件的路由(gin的引擎,http server)(可以将gin的engine作为Handler作为http.Server的参数再进一层封装)
+	r := gin.New() //没有自带中间件的路由(gin的引擎,http service)(可以将gin的engine作为Handler作为http.Server的参数再进一层封装)
 	//gin框架集成zap(zap可以处理gin框架的日志了,其余的看喜好,zap,logrus,原生log都可以)
 	r.Use(GinLogger(Logger), GinRecovery(Logger, true))
 

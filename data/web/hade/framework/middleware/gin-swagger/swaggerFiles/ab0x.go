@@ -22,7 +22,7 @@ var (
 	// FS is a virtual memory file system
 	FS = webdav.NewMemFS()
 
-	// Handler is used to server files through a http handler
+	// Handler is used to service files through a http handler
 	Handler *webdav.Handler
 
 	// HTTP is the http file system

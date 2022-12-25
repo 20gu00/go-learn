@@ -28,7 +28,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.`,
 
   The GNU Affero General Public License is a free, copyleft license for
 software and other kinds of works, specifically designed to ensure
-cooperation with the community in the case of network server software.
+cooperation with the community in the case of network service software.
 
   The licenses for most software and other practical works are designed
 to take away your freedom to share and change the works.  By contrast,
@@ -55,15 +55,15 @@ incorporate.  GetMany developers of free software are heartened and
 encouraged by the resulting cooperation.  However, in the case of
 software used on network servers, this result may fail to come about.
 The GNU General Public License permits making a modified version and
-letting the public access it on a server without ever releasing its
+letting the public access it on a service without ever releasing its
 source code to the public.
 
   The GNU Affero General Public License is designed specifically to
 ensure that, in such cases, the modified source code becomes available
-to the community.  It requires the operator of a network server to
+to the community.  It requires the operator of a network service to
 provide the source code of the modified version running there to the
-users of that server.  Therefore, public use of a modified version, on
-a publicly accessible server, gives the public access to the source
+users of that service.  Therefore, public use of a modified version, on
+a publicly accessible service, gives the public access to the source
 code of the modified version.
 
   An older license, called the Affero General Public License and
@@ -271,7 +271,7 @@ in one of these ways:
     medium customarily used for software interchange, for a price no
     more than your reasonable cost of physically performing this
     conveying of source, or (2) access to copy the
-    Corresponding Source from a network server at no charge.
+    Corresponding Source from a network service at no charge.
 
     c) Convey individual copies of the object code with a copy of the
     written offer to provide the Corresponding Source.  This
@@ -284,11 +284,11 @@ in one of these ways:
     Corresponding Source in the same way through the same place at no
     further charge.  You need not require recipients to copy the
     Corresponding Source along with the object code.  If the place to
-    copy the object code is a network server, the Corresponding Source
-    may be on a different server (operated by you or a third party)
+    copy the object code is a network service, the Corresponding Source
+    may be on a different service (operated by you or a third party)
     that supports equivalent copying facilities, provided you maintain
     clear directions next to the object code saying where to find the
-    Corresponding Source.  Regardless of what server hosts the
+    Corresponding Source.  Regardless of what service hosts the
     Corresponding Source, you remain obligated to ensure that it is
     available for as long as needed to satisfy these requirements.
 
@@ -506,7 +506,7 @@ patent against the party.
   If you convey a covered work, knowingly relying on a patent license,
 and the Corresponding Source of the work is not available for anyone
 to copy, free of charge and under the terms of this License, through a
-publicly available network server or other readily accessible means,
+publicly available network service or other readily accessible means,
 then you must either (1) cause the Corresponding Source to be so
 available, or (2) arrange to deprive yourself of the benefit of the
 patent license for this particular work, or (3) arrange, in a manner
@@ -563,7 +563,7 @@ Program, your modified version must prominently offer all users
 interacting with it remotely through a computer network (if your version
 supports such interaction) an opportunity to receive the Corresponding
 Source of your version by providing access to the Corresponding Source
-from a network server at no charge, through some standard or customary
+from a network service at no charge, through some standard or customary
 means of facilitating copying of software.  This Corresponding Source
 shall include the Corresponding Source for any work covered by version 3
 of the GNU General Public License that is incorporated pursuant to the

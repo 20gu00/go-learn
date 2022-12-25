@@ -1,8 +1,8 @@
-// 1. start the dev server using production config
+// 1. start the dev service using production config
 process.env.NODE_ENV = 'testing'
 
 const webpack = require('webpack')
-const DevServer = require('webpack-dev-server')
+const DevServer = require('webpack-dev-service')
 
 const webpackConfig = require('../../build/webpack.prod.conf')
 const devConfigPromise = require('../../build/webpack.dev.conf')

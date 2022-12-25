@@ -19,7 +19,7 @@ func main() {
 	//	rootCAFile = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 
 	//default:default
-	//集群内部,pod去调用api server,就不能使用kubeconfig了,就是使用client-go的服务账号信息,所以这里自然也就不能在不熟k8s的机器上直接go run了
+	//集群内部,pod去调用api service,就不能使用kubeconfig了,就是使用client-go的服务账号信息,所以这里自然也就不能在不熟k8s的机器上直接go run了
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		panic(err.Error())

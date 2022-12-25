@@ -10,16 +10,16 @@ type Routable interface {
 	Route(method string, pattern string, handlerFunc handlerFunc) error
 }
 
-// Server 是http server 的顶级抽象
+// Server 是http service 的顶级抽象
 type Server interface {
 	Routable
 	// Start 启动我们的服务器
 	Start(address string) error
 }
 
-// sdkHttpServer 这个是基于 net/http 这个包实现的 http server
+// sdkHttpServer 这个是基于 net/http 这个包实现的 http service
 type sdkHttpServer struct {
-	// Name server 的名字，给个标记，日志输出的时候用得上
+	// Name service 的名字，给个标记，日志输出的时候用得上
 	Name    string
 	handler Handler
 	root    Filter
@@ -34,7 +34,7 @@ func (s *sdkHttpServer) Start(address string) error {
 	return http.ListenAndServe(address, s)
 }
 
-func (s *sdkHttpServer) ServeHTTP(writer http.ResponseWriter, request *http.Request)  {
+func (s *sdkHttpServer) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	c := NewContext(writer, request)
 	s.root(c)
 }
@@ -52,10 +52,9 @@ func NewSdkHttpServer(name string, builders ...FilterBuilder) Server {
 		root = b(root)
 	}
 	res := &sdkHttpServer{
-		Name: name,
+		Name:    name,
 		handler: handler,
-		root: root,
+		root:    root,
 	}
 	return res
 }
-

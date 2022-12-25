@@ -36,7 +36,7 @@ and register it to its parent (default rootCmd).
 If you want your command to be public, pass in the command name
 with an initial uppercase letter.
 
-Example: cobra add server -> resulting in a new cmd/server.go`,
+Example: cobra add service -> resulting in a new cmd/service.go`,
 
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) < 1 {
