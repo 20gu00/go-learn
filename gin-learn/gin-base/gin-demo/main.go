@@ -7,6 +7,7 @@ import (
 
 func main() {
 	// 实例化gin对象
+	// update全量更新,patch部分更新
 	r := gin.Default()
 	// 定义路由规则，gin.Context，封装了request和response
 	r.GET("/api/gin-test", func(c *gin.Context) {
