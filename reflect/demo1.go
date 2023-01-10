@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+	//reflect运行期间获取对象的类型信息和内存结构
 	//反射操作：通过反射，可以获取一个接口类型变量的 类型和数值
 	//reflect.TypeOf： 直接给到了我们想要的type类型，如float64、int、各种pointer、struct 等等真实的类型
 	//    reflect.ValueOf：直接给到了我们想要的具体的值，如1.2345这个具体数值，或者类似&{1 “Allen.Wu” 25} 这样的结构体struct的值
