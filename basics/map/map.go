@@ -50,15 +50,18 @@ func main() {
 			float：0.0-->0
 			string:""
 			array:[00000]
+			struct零值不可用
 
+			// 引用类型零值
 			slice：nil
 			map：nil
 
 	*/
 
 	//1.创建map
-	var map1 map[int]string         //没有初始化，nil
+	var map1 map[int]string         //没有初始化，没有分配内存地址,nil,不可用,直接使用会报错panic nil pointer
 	var map2 = make(map[int]string) //创建
+	// {}直接赋值
 	var map3 = map[string]int{"Go": 98, "Python": 87, "Java": 79, "Html": 93}
 	fmt.Println(map1)
 	fmt.Println(map2)
@@ -68,6 +71,7 @@ func main() {
 	fmt.Println(map2 == nil)
 	fmt.Println(map3 == nil)
 	//2.nil map
+	// 如果map等于nil那么就重新给它make
 	if map1 == nil {
 		map1 = make(map[int]string)
 		fmt.Println(map1 == nil)

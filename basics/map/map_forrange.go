@@ -51,7 +51,8 @@ func main() {
 	//sort.Ints()操作对象是slice,从小到大排列
 	sort.Ints(keys)
 	fmt.Println("sort:", keys)
-	//reverse
+	// reverse颠倒
+	// Sort按照less方法定义来排序数据
 	sort.Sort(sort.Reverse(sort.IntSlice(keys)))
 	fmt.Println("sort by desc:", keys)
 	//use for 注意这里比较的是值,在我们这里也中文字符,只是进行效果演示

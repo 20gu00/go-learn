@@ -4,14 +4,18 @@ import "fmt"
 
 func main() {
 	/*
-		slice := arr[start:end]
-		 	切片中的数据：[start,end)
-		 	arr[:end],从头到end
-		 	arr[start:]从start到末尾
+			slice := arr[start:end]
+			 	切片中的数据：[start,end)
+			 	arr[:end],从头到end
+			 	arr[start:]从start到末尾
 
-		 从已有的数组上，直接创建切片，该切片的底层数组就是当前的数组。
-		 	长度是从start到end切割的数据量。
-			但是容量从start到数组的末尾。
+			 从已有的数组上，直接创建切片，该切片的底层数组就是当前的数组。
+			 	长度是从start到end切割的数据量。
+				但是容量从start到数组的末尾。
+
+
+
+		变长参数本质就是个切片,形参...int,传递实参i...,传递一个int切片
 	*/
 
 	//在已有的切片上创建切片也是同样的道理
