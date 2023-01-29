@@ -109,6 +109,7 @@ func main() {
 
 	//namedQuery
 	//``
+	//DB.NamedExec方法用来绑定SQL语句与结构体或map中的同名字段。
 	sqlStr = "select id,name,age from user where name=:name"
 	rows, err := DB.NamedQuery(sqlStr,
 		map[string]interface{}{

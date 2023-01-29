@@ -22,7 +22,7 @@ func (u *User) Value() (driver.Value, error) {
 //使用sqlx.In拼接语句和参数
 func BatchInsertUser2(users []interface{}) error {
 	query, args, _ := sqlx.In(
-		"insert into user(name,age) values(?),(?),(?)",
+		"insert into user(id,name,age) values(?),(?),(?)",
 		users...,
 	)
 	fmt.Println(query)
