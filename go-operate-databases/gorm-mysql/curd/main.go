@@ -10,6 +10,7 @@ import (
 )
 
 //表对应的struct
+//大写 gorm才能操作grom标签的
 type User struct {
 	ID       int64 `gorm:"primary_key"`
 	Username string

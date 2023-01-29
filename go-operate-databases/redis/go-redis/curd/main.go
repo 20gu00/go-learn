@@ -24,6 +24,7 @@ func main() {
 
 	fmt.Println("建立redis的连接成功")
 
+	// 过期时间
 	if err := RDB.Set("score", 100, 0).Err(); err != nil {
 		fmt.Println("set失败", err.Error())
 		return

@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	// add store load compare swap
 	var a int64
 	go func() {
 		atomic.AddInt64(&a, 10)

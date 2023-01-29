@@ -1,2 +1,4 @@
 go-redis适用于哨兵和集群模式的redis
 go get github.com/go-redis/redis
+Redis支持诸如字符串（strings）、哈希（hashes）、列表（lists）、集合（sets）、带范围查询的排序集合（sorted sets）、位图（bitmaps）、hyperloglogs、带半径查询和流的地理空间索引等数据结构（geospatial indexes）。
+string hash list set zset

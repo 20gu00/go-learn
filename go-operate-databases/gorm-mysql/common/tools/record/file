@@ -7,6 +7,7 @@ create database test charset=utf8mb4
 
 
 文件夹用横线，文件用下划线，变量用驼峰
+不写gorm默认可以
 
 gorm:"column:create_at"
 gorm:"type:varchar(100);unique_index"
@@ -29,3 +30,10 @@ model模型
 一对多:
 hash many
 比如一个人可以拥有多张银行卡
+
+
+多对多:
+课程和学生
+
+
+其实都是中间表做关联

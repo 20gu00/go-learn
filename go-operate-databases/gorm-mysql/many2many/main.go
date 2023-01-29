@@ -20,10 +20,12 @@ type Language struct {
 	Users []*User `gorm:"many2many:user_languages"`
 }
 
-// 自定义第三张表
+// 表名一般都是加s
+// 自定义第三张表(默认自动创建)
 // gorm.Model有主键
 type UserLanguage struct {
-	gorm.Model
+	//gorm.Model
+	// 这两个做联合主建
 	UserID     int `gorm:"primarykey"`
 	LanguageID int `gorm:"primarykey"`
 	//////////////

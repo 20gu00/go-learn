@@ -16,6 +16,7 @@ func InitDb() error {
 
 	defer db.Close()
 	fmt.Println("建立mysql连接中")
+	// ping往往是真正连接
 	if err := db.Ping(); err != nil {
 		fmt.Println(err)
 		return err

@@ -85,7 +85,7 @@ func main() {
 
 	// WithTimeout 其实是和 WithDeadline 一样，只不过一个参数是超时时间，一个参数是截止时间。超时时间加上当前时间，其实就是截止时间
 	c1 := context.TODO()
-	ctx3, _ := context.WithTimeout(c1, 1*time.Second) // cancelFunc
+	ctx3, _ := context.WithTimeout(c1, 1*time.Second) // cancelFunc  defer
 	ctxC4, _ := context.WithCancel(ctx3)
 	ctxC5, _ := context.WithCancel(ctxC4)
 	//cancel()
