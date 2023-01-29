@@ -49,6 +49,7 @@ type myint int
 type mystr string
 
 //2.定义函数类型
+// 函数是一等公民,可以将函数的定义赋值给某个变量
 type myfun func(int, int) string
 
 func fun1() myfun { //fun1()函数的返回值是myfun类型

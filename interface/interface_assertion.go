@@ -13,6 +13,7 @@ func main() {
 			方式一：
 				1.instance := 接口对象.(实际类型) //不安全，会panic()
 				2.instance, ok := 接口对象.(实际类型) //安全
+				断言接口,失败那么类型就是被断言的接口类型,值是nil
 
 			方式二：switch
 				switch instance := 接口对象.(type){
