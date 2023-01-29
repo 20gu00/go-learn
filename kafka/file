@@ -1,0 +1,10 @@
+broker经纪人 缓存代理，Kafka集群中的一台或多台服务器统称broker
+消息生产者消费者,消息只会被消费一次,同时只有一个消费者
+kafka是一款基于发布与订阅的消息系统。它一般被称为“分布式提交日志”或者“分布式流平台”。文件系统或者数据库提交日志用来提供所有事物的持久化记录，通过重建这些日志可以重建系统的状态。同样地，kafka的数据是按照一定顺序持久化保存的，可以按需读取。
+Topic Kafka处理资源的消息源(feeds of messages)的不同分类 主题分类
+seek设置偏移量
+Partition Topic物理上的分组，一个topic可以分为多个partion,每个partion是一个有序的队列。partion中每条消息都会被分 配一个 有序的Id(offset)
+Message 消息，是通信的基本单位，每个producer可以向一个topic（主题）发布一些消息
+Producers 消息和数据生成者，向Kafka的一个topic发布消息的 过程叫做producers
+Consumers 消息和数据的消费者，订阅topic并处理其发布的消费过程叫做consumers
+github.com/segmentio/kafka-go
