@@ -30,6 +30,7 @@ func main() {
 		v1 = v1.Elem()
 	}
 
+	// 反射获取结构体成员
 	f1 := v1.FieldByName("Name")
 	f1.SetString("韩茹")
 	f3 := v1.FieldByName("School")
