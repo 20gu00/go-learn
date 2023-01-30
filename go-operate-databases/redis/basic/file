@@ -1,0 +1,46 @@
+redis not only sql key-value数据库,用于数据库,缓存,消息队列
+
+value支持五种数据类型,字符串string,字符串列别哦list,字符串集合sets,有序字符串集合sorted sets,哈希hash
+
+内存断电即弃,redis可以存入磁盘
+
+二进制安全,可以string存储图片内容
+
+ping 查看连接是否正常
+clear清空控制台
+
+-------------string:
+set k1 "v1"
+get k1
+keys * 列出当前库所有的key,生产慎用
+FLUSHALL清空所有库内容
+EXIST k1判断key是否存在
+move name 1一处当前库1key为name的内容
+EXPIRE k1 15 设置k1过期时间15s
+ttl k1 查看key的剩余的生命时间(-2则是过期)
+过期了get k1 内容为空
+APPEND k1 "hhhhh" 拼接 这里是string拼接(zset拼接) 返回值是新的value的长度
+STRLEN k1 获取k1的value长度
+incr k1 自增1
+decr 自减少1
+incr k1 10自增10
+decr k1 10自减10
+getrange k1 0 4截取索引0到4的字符
+set k1 v2替换
+setrange k1 5 888从所以5开始 也就是567的替换成888
+setex k1 15 v1创建的时候指定过期时间
+setnx k1 v1 看存在则设置失败,不存在则设置成功
+
+mset k1 v1 k2 v3 插入多条数据
+keys *  //列出来,新设置的在下面
+mget k1 k2
+mset k1 v1 k3 v3 也算是原子操作,要么全部成功要么失败,存在的不创建
+mset student:1:name v1 student:1:age v1 类:id:属性(开发作用明显)
+student:1:name是一个key
+mget student:1:name student:1:age
+
+getset k1 v1 先get在set,先获取key k1,由则set v1
+get k1
+
+更多命令使用redis.io官网文档
+
