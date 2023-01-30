@@ -1,0 +1,119 @@
+----------------Set（集合）元素唯一不重复:
+1.sadd（添加）、smembers（查看所有元素）、sismember（判断是否存在）、scard（查看长度）、srem（移除指定元素）操作
+
+#set中所有的元素都是唯一的不重复的！
+127.0.0.1:6379> sadd set1 ding da mian tiao  #添加set集合（可批量可单个，写法一致，不再赘述）
+(integer) 4
+127.0.0.1:6379> SMEMBERS set1  #查看set中所有元素
+1) "mian"
+2) "da"
+3) "tiao"
+4) "ding"
+127.0.0.1:6379> SISMEMBER set1 da  #判断某个值在不在set中，在返回1
+(integer) 1
+127.0.0.1:6379> SISMEMBER set1 da1  #不在返回0
+(integer) 0
+127.0.0.1:6379> SCARD set1  #查看集合的长度，相当于size、length
+(integer) 4
+127.0.0.1:6379> srem set1 da  #移除set中指定的元素
+(integer) 1
+127.0.0.1:6379> SMEMBERS set1  #移除成功
+1) "mian"
+2) "tiao"
+3) "ding"
+
+2.srandmember（抽随机）操作
+
+127.0.0.1:6379> sadd myset 1 2 3 4 5 6 7  #在set中添加7个元素
+(integer) 7
+127.0.0.1:6379> SMEMBERS myset
+1) "1"
+2) "2"
+3) "3"
+4) "4"
+5) "5"
+6) "6"
+7) "7"
+127.0.0.1:6379> SRANDMEMBER myset 1  #随机抽取myset中1个元素返回
+1) "4"
+127.0.0.1:6379> SRANDMEMBER myset 1  #随机抽取myset中1个元素返回
+1) "1"
+127.0.0.1:6379> SRANDMEMBER myset 1  #随机抽取myset中1个元素返回
+1) "5"
+127.0.0.1:6379> SRANDMEMBER myset  #不填后参数，默认抽1个值，但是下面返回不会带序号值
+"3"
+127.0.0.1:6379> SRANDMEMBER myset 3  #随机抽取myset中3个元素返回
+1) "1"
+2) "2"
+3) "3"
+127.0.0.1:6379> SRANDMEMBER myset 3  #随机抽取myset中3个元素返回
+1) "6"
+2) "3"
+3) "5"
+
+
+3.spop（随机删除元素）、smove（移动指定元素到新的集合中）操作
+127.0.0.1:6379> SMEMBERS myset
+1) "1"
+2) "2"
+3) "3"
+4) "4"
+5) "5"
+6) "6"
+7) "7"
+127.0.0.1:6379> spop myset  #随机删除1个元素，不指定参数值即删除1个
+"2"
+127.0.0.1:6379> spop myset 1  #随机删除1个元素
+1) "7"
+127.0.0.1:6379> spop myset 2  #随机删除2个元素
+1) "3"
+2) "5"
+127.0.0.1:6379> SMEMBERS myset  #查询删除后的结果
+1) "1"
+2) "4"
+3) "6"
+127.0.0.1:6379> smove myset myset2 1  #移动指定set中的指定元素到新的set中
+(integer) 1
+127.0.0.1:6379> SMEMBERS myset  #查询原来的set集合
+1) "4"
+2) "6"
+127.0.0.1:6379> SMEMBERS myset2  #查询新的set集合，如果新的set存在，即往后加，如果不存在，则自动创建set并且加入进去
+1) "1"
+
+
+
+4.sdiff（差集）、sinter（交集）、sunion（并集）操作
+127.0.0.1:6379> sadd myset1 1 2 3 4 5
+(integer) 5
+127.0.0.1:6379> sadd myset2 3 4 5 6 7
+(integer) 5
+127.0.0.1:6379> SMEMBERS myset1
+1) "1"
+2) "2"
+3) "3"
+4) "4"
+5) "5"
+127.0.0.1:6379> SMEMBERS myset2
+1) "3"
+2) "4"
+3) "5"
+4) "6"
+5) "7"
+127.0.0.1:6379> SDIFF myset1 myset2  #查询指定的set之间的差集，可以是多个set
+1) "1"
+2) "2"
+127.0.0.1:6379> SINTER myset1 myset2  #查询指定的set之间的交集，可以是多个set
+1) "3"
+2) "4"
+3) "5"
+127.0.0.1:6379> sunion myset1 myset2  #查询指定的set之间的并集，可以是多个set
+1) "1"
+2) "2"
+3) "3"
+4) "4"
+5) "5"
+6) "6"
+7) "7"
+可实现共同好友、共同关注等需求。
+
+

@@ -98,3 +98,117 @@ rpop list  #从尾部开始移除第一个元素
 127.0.0.1:6379> llen list  #获取指定集合的元素长度
 (integer) 3
 
+
+
+4.lrem（根据value移除指定的值）
+127.0.0.1:6379> LRANGE list 0 -1
+1) "v4"
+2) "v3"
+3) "v2"
+127.0.0.1:6379> lrem list 1 v2  #移除集合list中的元素是v2的元素1个
+(integer) 1
+127.0.0.1:6379> LRANGE list 0 -1
+1) "v4"
+2) "v3"
+127.0.0.1:6379> lrem list 0 v3 #移除集合list中的元素是v2的元素1个,这里的0和1效果是一致的
+(integer) 1
+127.0.0.1:6379> LRANGE list 0 -1
+1) "v4"
+127.0.0.1:6379> lpush list  v3 v2 v2 v2
+(integer) 4
+127.0.0.1:6379> LRANGE list 0 -1
+1) "v2"
+2) "v2"
+3) "v2"
+4) "v3"
+5) "v4"
+127.0.0.1:6379> lrem list 3 v2  #移除集合list中元素为v2 的‘3’个，这里的参数数量，如果实际中集合元素数量不达标，不会报错，全部移除后返回成功移除后的数量值
+(integer) 3
+127.0.0.1:6379> LRANGE list 0 -1
+1) "v3"
+2) "v4"
+
+
+
+5.ltrim（截取元素）、rpoplpush（移除指定集合中最后一个元素到一个新的集合中）操作
+#ltrim
+127.0.0.1:6379> lpush list v1 v2 v3 v4
+(integer) 4
+127.0.0.1:6379> LRANGE list 0 -1
+1) "v4"
+2) "v3"
+3) "v2"
+4) "v1"
+127.0.0.1:6379> ltrim list 1 2  #通过下标截取指定的长度，这个list已经被改变了，只剩下我们所指定截取后的元素
+OK
+127.0.0.1:6379> LRANGE list 0 -1  #只要ltrim的部分
+1) "v3"
+2) "v2"
+################
+#rpoplpush
+127.0.0.1:6379> lpush list v1 v2 v3 v4 v5
+(integer) 5
+127.0.0.1:6379> LRANGE list 0 -1
+1) "v5"
+2) "v4"
+3) "v3"
+4) "v2"
+5) "v1"
+127.0.0.1:6379> rpoplpush list newlist  #移除list集合中的最后一个元素到新的集合newlist中，返回值是移除的最后一个元素值
+"v1"
+127.0.0.1:6379> LRANGE list 0 -1
+1) "v5"
+2) "v4"
+3) "v3"
+4) "v2"
+127.0.0.1:6379> LRANGE newlist 0 -1  #确实存在该newlist集合并且有刚刚移除的元素，证明成功
+1) "v1"
+
+
+6.lset（更新）、linsert操作
+#lset
+127.0.0.1:6379> LRANGE list 0 -1
+1) "v5"
+2) "v4"
+3) "v3"
+4) "v2"
+127.0.0.1:6379>
+127.0.0.1:6379> lset list 1 newV5  #更新list集合中下标为‘1’的元素为‘newV5’
+OK
+127.0.0.1:6379> LRANGE list 0 -1  #查看证明更新成功
+1) "v5"
+2) "newV5"
+3) "v3"
+4) "v2"
+##注意点：
+127.0.0.1:6379> lset list1 0 vvvv  #如果指定的‘集合’不存在，报错
+(error) ERR no such key
+127.0.0.1:6379> lset list 8 vvv  #如果集合存在，但是指定的‘下标’不存在，报错
+(error) ERR index out of range
+########################
+#linsert
+127.0.0.1:6379> LRANGE list 0 -1
+1) "v5"
+2) "newV5"
+3) "v3"
+4) "v2"
+127.0.0.1:6379> LINSERT list after v3 insertv3  #在集合中的‘v3’元素 ‘(after)之后’ 加上一个元素
+(integer) 5
+127.0.0.1:6379> LRANGE list 0 -1
+1) "v5"
+2) "newV5"
+3) "v3"
+4) "insertv3"
+5) "v2"
+127.0.0.1:6379> LINSERT list before v3 insertv3  #在集合中的‘v3’元素 ‘(before)之前’ 加上一个元素
+(integer) 6
+127.0.0.1:6379> LRANGE list 0 -1
+1) "v5"
+2) "newV5"
+3) "insertv3"
+4) "v3"
+5) "insertv3"
+6) "v2"
+
+
+
