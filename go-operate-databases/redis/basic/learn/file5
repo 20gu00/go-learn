@@ -1,0 +1,60 @@
+Redis发布订阅（pub/sub）是一种消息通信模式：发送者（pub）发送消息，订阅者（sub）接受消息。
+Redis客户端可以订阅任意数量的频道！
+消息发布者发布消息到redis-server,消息订阅者从redis-server读取消息
+
+这些命令被广泛用于构建即时通信应用，比如网络聊天室(chatroom)和实时广播、实时提醒等。
+
+
+
+
+订阅端：
+127.0.0.1:6379> ping
+PONG
+127.0.0.1:6379> SUBSCRIBE dingdada  #订阅名字为 dingdada 的频道
+Reading messages... (press Ctrl-C to quit)
+1) "subscribe"
+2) "dingdada"
+3) (integer) 1
+#等待推送的信息
+1) "message"  #消息
+2) "dingdada"  #来自哪个频道的消息
+3) "hello world\xef\xbc\x81"  # 消息的具体内容
+1) "message"
+2) "dingdada"
+3) "my name is dyj\x81"
+
+
+
+发送端：
+127.0.0.1:6379> ping
+PONG
+127.0.0.1:6379> PUBLISH dingdada "hello world！"  #发送消息到dingdada 频道
+(integer) 1
+127.0.0.1:6379> PUBLISH dingdada "my name is dyj"  #发送消息到dingdada 频道
+(integer) 1
+
+
+
+
+UNSUBSCRIBE：退订
+
+
+
+
+
+
+
+
+
+
+
+----------------主从复制模式
+默认情况下，每台Redis服务器都是主节点；
+由于个人服务器性能原因，以下的所有操作都是单机集群的概念！在实际工作中并不会这样配置，而是使用哨兵模式来监控
+
+主从复制，是指将一台Redis服务器的数据，复制到其他的Redis服务器。前者称为主节点(master/leader)，后者称为从节点(slave/follower)；数据的复制是单向的，只能由主节点到从节点。Master以写为主，Slave 以读为主。
+主要作用：
+①数据冗余：主从复制实现了数据的热备份，是持久化之外的一种数据冗余方式。
+②故障恢复：当主节点出现问题时，可以由从节点提供服务，实现快速的故障恢复；实际上是一种服务的冗余。
+③负载均衡：在主从复制的基础上，配合读写分离，可以由主节点提供写服务，由从节点提供读服务（即写Redis数据时应用连接主节点，读Redis数据时应用连接从节点），分担服务器负载；尤其是在写少读多的场景下，通过多个从节点分担读负载，可以大大提高Redis服务器的并发量。
+④高可用（集群）基石：除了上述作用以外，主从复制还是哨兵和集群能够实施的基础，因此说主从复制是Redis高可用的基础。
