@@ -117,3 +117,127 @@
 可实现共同好友、共同关注等需求。
 
 
+-----------------------Hash（哈希）
+1.hset（添加hash）、hget（查询）、hgetall（查询所有）、hdel（删除hash中指定的值）、hlen（获取hash的长度）、hexists（判断key是否存在）操作
+
+127.0.0.1:6379> hset myhash name dingdada age 23  #添加hash，可多个
+(integer) 2
+127.0.0.1:6379> hget myhash name  #获取hash中key是name的值
+"dingdada"
+127.0.0.1:6379> hget myhash age  #获取hash中key是age的值
+"23"
+127.0.0.1:6379> hgetall myhash  #获取hash中所有的值，包含key
+1) "name"
+2) "dingdada"
+3) "age"
+4) "23"
+127.0.0.1:6379> hset myhash del test  #添加
+(integer) 1
+127.0.0.1:6379> hgetall myhash
+1) "name"
+2) "dingdada"
+3) "age"
+4) "23"
+5) "del"
+6) "test"
+127.0.0.1:6379> hdel myhash del age  #删除指定hash中的key（可多个），key删除后对应的value也会被删除
+(integer) 2
+127.0.0.1:6379> hgetall myhash
+1) "name"
+2) "dingdada"
+127.0.0.1:6379> hlen myhash  #获取指定hash的长度(key value对)
+(integer) 1
+127.0.0.1:6379> HEXISTS myhash name  #判断key是否存在于指定的hash，存在返回1
+(integer) 1
+127.0.0.1:6379> HEXISTS myhash age  #判断key是否存在于指定的hash，不存在返回0
+(integer) 0
+
+
+2.hkeys（获取所有key）、hvals（获取所有value）、hincrby（给值加增量）、hsetnx（存在不添加）操作
+127.0.0.1:6379> hset myhash age 23 high 173
+(integer) 2
+127.0.0.1:6379> hgetall myhash
+1) "name"
+2) "dingdada"
+3) "age"
+4) "23"
+5) "high"
+6) "173"
+127.0.0.1:6379> hkeys myhash  #获取指定hash中的所有key
+1) "name"
+2) "age"
+3) "high"
+127.0.0.1:6379> hvals myhash   #获取指定hash中的所有value
+1) "dingdada"
+2) "23"
+3) "173"
+127.0.0.1:6379> hincrby myhash age 2  #让hash中age的value指定+2(自增)
+(integer) 25
+127.0.0.1:6379> hincrby myhash age -1  #让hash中age的value指定-1(自减)
+(integer) 24
+127.0.0.1:6379> hsetnx myhash nokey novalue  #添加不存在就新增返回新增成功的数量（只能单个增加哦）
+(integer) 1
+127.0.0.1:6379> hsetnx myhash name miaotiao  #添加存在则失败返回0
+(integer) 0
+127.0.0.1:6379> hgetall myhash
+1) "name"
+2) "dingdada"
+3) "age"
+4) "24"
+5) "high"
+6) "173"
+7) "nokey"
+8) "novalue"
+比String更加适合存对象
+
+---------------------zSet（有序集合）
+1.zadd（添加）、zrange（查询）、zrangebyscore（排序小-大）、zrevrange（排序大-小）、zrangebyscore withscores（查询所有值包含key）操作
+scope member(scope从小到大)
+
+127.0.0.1:6379> zadd myzset 1 one 2 two 3 three  #添加zset值，可多个
+(integer) 3
+127.0.0.1:6379> ZRANGE myzset 0 -1  #查询所有的值
+1) "one"
+2) "two"
+3) "three"
+#-inf 负无穷  +inf 正无穷
+127.0.0.1:6379> ZRANGEBYSCORE myzset -inf +inf  #将zset的值根据key来从小到大排序并输出
+1) "one"
+2) "two"
+3) "three"
+127.0.0.1:6379> ZRANGEBYSCORE myzset 0 1  #只查询key<=1(scope)的值并且排序从小到大
+1) "one"
+127.0.0.1:6379> ZREVRANGE myzset 1 -1  #从大到小排序输出(1索引为1,-1向上一个)
+1) "two"
+2) "one"
+127.0.0.1:6379> ZRANGEBYSCORE myzset -inf +inf withscores  #查询指定zset的所有值，包含序号的值
+1) "one"
+2) "1"
+3) "two"
+4) "2"
+5) "three"
+6) "3"
+
+
+2.zrem（移除元素）、zcard（查看元素个数）、zcount（查询指定区间内的元素个数）操作
+
+127.0.0.1:6379> zadd myset 1 v1 2 v2 3 v3 4 v4
+(integer) 4
+127.0.0.1:6379> ZRANGE myset 0 -1
+1) "v1"
+2) "v2"
+3) "v3"
+4) "v4"
+127.0.0.1:6379> zrem myset v3  #移除指定的元素，可多个
+(integer) 1
+127.0.0.1:6379> ZRANGE myset 0 -1
+1) "v1"
+2) "v2"
+3) "v4"
+127.0.0.1:6379> zcard myset  #查看zset的元素个数，相当于长度，size。
+(integer) 3
+127.0.0.1:6379> zcount myset 0 100  #查询指定区间内的元素个数
+(integer) 3
+127.0.0.1:6379> zcount myset 0 2  #查询指定区间内的元素个数
+(integer) 2
+成绩表排序，工资表排序，年龄排序等需求可以用zset来实现！
