@@ -25,9 +25,9 @@ restful(http) json编解码 数据格式json
 
 生成message.pb.go、message_grpc.pb.go这两个文件。在这两个文件中，包含了我们定义方法的go语言实
 现，也包含了我们定义的请求与响应的go语言实现。
-protoc "(go_out=. message.proto
-protoc "(go-grpc_out=. message.proto
-
+protoc go_out=. message.proto
+protoc go-grpc_out=. message.proto
+或者旧版本protoc -I . xxx.proto  --go_out=plugins=grpc:.
 
 
 // Filename: addressbook.proto

@@ -5,7 +5,7 @@ option go_package = "../pb;pb";
 // 定义了一个service，称为MessageSender，这个服务中有一个rpc方法，名为Send。这个方法会发送一个MessageRequest，然后返回一个MessageResponse。
 // 请求响应
 message MessageResponse {
-  string responseSomething = 1;
+  string responseSomething = 1;  //1编号,唯一
 }
 message MessageRequest {
   string saySomething = 1;
