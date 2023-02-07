@@ -1,0 +1,18 @@
+syntax = "proto3";
+// 这部分的内容是关于最后生成的go文件是处在哪个目录哪个包中，./pb代表在当前目录的上一级pb目录中生成，message代表了生成的go文件的包名是message。
+// 实际输出的目录位置要以命令的out指定的目录为基础
+option go_package = "../pb;pb";
+// 定义了一个service，称为MessageSender，这个服务中有一个rpc方法，名为Send。这个方法会发送一个MessageRequest，然后返回一个MessageResponse。
+// 请求响应
+message MessageResponse {
+  string responseSomething = 1;
+}
+message MessageRequest {
+  string saySomething = 1;
+}
+// service
+service MessageSender {
+  rpc Send(MessageRequest) returns (MessageResponse) {}
+}
+
+

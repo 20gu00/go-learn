@@ -1,0 +1,24 @@
+grpc使用protobuf http2   protobuf高性能的数据结构存储格式
+开源的高性能rpc框架
+多语言支持 grpc-go
+
+c开发的,高性能   不同语言的服务的调用
+
+
+
+protobuf压缩好,传输快,序列化和反序列化快
+使用简单,维护成本低,只用维护proto文件,加密性好(二进制)
+(json)跨语言跨平台   通用性不够json,自解释性差,需要通过proto文件解析才能获取数据结构
+
+
+
+
+
+
+
+需要这些内容:
+protoc(通用)
+grpc-go:go get github.com/golang/protobuf/protoc-gen-go(可执行文件)
+proto文件
+(protoc可以将proto文件编译成各种代码,如果是go代码,那么需要protoc-gen-go
+
