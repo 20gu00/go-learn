@@ -69,3 +69,83 @@ grpc.Dial("127.0.0.1:50051",opts)
 
 
 go-grpc-middleware库下有很多常见的拦截器功能
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------grpc拦截器和metadata搭配使用
+实现请求过来服务端,验证,用户名/密码
+使用metadata而不是message可以避免调用业务逻辑的侵入性
+
+可以在拦截器的代码中生成metadata,就是metadata的new或者Pairs的代码
+拿到md,根据md做一个ctx
+再到业务逻辑代码调用err:=involer(ctx,method,req,reply,cc,opts...)
+
+
+
+server端获取metadata也在拦截器中做而不用改业务代码
+就是在handler之前:
+md,err:=metadata.FromIncomingContext(ctx)
+1.先判断有没有metadata
+2.拿到id passwd判断是否正确
+
+对于错误,比如拦截器返回的错误可以使用grpc提供的错误status.Error(codes.grpc内置的错误码,"没有token认证的信息)  (code,msg)
+"google.golang.org/grpc/status"
+
+
+然后启动客户端和服务端,即可通过拦截器实现auth认证,认证失败上面的拦截器直接return,不执行handler
+
+
+
+
+
+
+
+
+
+
+------------------------------更高级的grpc搭配metadata(auth验证)
+客户端:
+type customCredential struct{}
+func (c customCredential)GetRequestMetadata(ctx context.Context,uri ...string)(map[string]string,error){
+    return map[string]string{
+        //metadata中定义的key-value
+        "appid":"100",
+        "appkey":"test ok",
+    },nil
+}
+// 不太需要
+func (c customCredential)RequireTransportSecurity()bool{
+    return false
+}
+
+main:
+在grpc.Dial之前
+opt:=grpc.WithPerRPCCredentials(customCredential{})
+将这个opt添加到opts中,也就是grpc.Dial()的参数
+
+
+服务端:
+写法不变,一样可以通过拦截起来做metadata解析
+
+
+
+
+
+
+
+
