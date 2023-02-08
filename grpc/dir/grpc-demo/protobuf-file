@@ -126,3 +126,25 @@ message Test{
 Mp:map[string]string{}
 
 
+
+
+
+
+
+
+
+
+
+
+----------------------------protobuf的内置timestamp
+当然也可以int或者string转成时间或者时间戳
+import "google/protobuf/timestamp.proto"
+message Test{
+    google.protobuf.Timestamp addTime=1;
+}
+代码中使用:
+import //timestamp "github.com/golang/protobuf/ptypes/timestamp"
+timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+
+Addtime: timestamp.Timestamp()  // 跟go平常用的timestamp有些区别
+Addtime: timestamppb.New(time.Now())
