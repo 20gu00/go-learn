@@ -1,0 +1,71 @@
+grpc拦截器:
+可分为客户端拦截器和服务端拦截器,其实就是针对请求进行拦截并设置某些内容
+
+
+grpc拦截器实现:
+1.pb proto文件 protoc运行准备
+2.server端拦截器实现
+3.或者客户端拦截器
+
+
+变长参数,本质上就是slice,可以放任意个参数进来
+
+------------------------server端拦截器实现:
+在grpc.NewServer()上:
+opt:=grpc.UnaryInterceptor(interceptor)   // 一元模式拦截器
+在将opt放进s:=grpc.NewServer(opt)   (opt1,opt2)
+
+需要实现这个函数,名称自定义
+// 全局变量(main函数里可行)
+interceptor:=func(ctx context.Context,req interface{},info *grpc.UnaryServerInfo,handler grpc.UnaryHandler)(resp interface{},err error){
+    // 拦截器逻辑
+    fmt.Println("拦截到一个请求了哈哈")
+    // 直接return原本的逻辑,正常运行,就是正常的grpc调用处理
+    return handler(ctx,req)   // 到这里服务端拦截器设置好了,每次客户端调用服务端的方法都会打印一次这个拦截到一个请求了哈哈
+
+}
+
+interceptor:=func(ctx context.Context,req interface{},info *grpc.UnaryServerInfo,handler grpc.UnaryHandler)(resp interface{},err error){
+    // 拦截器逻辑
+    fmt.Println("拦截到一个请求了哈哈")
+    // 这里可以获取个当前时间
+
+    // 调用逻辑完成后我先不return,接收一下res,可以用来统计服务端完成的时间
+    res,err:=handler(ctx,req)
+    fmt.Println("请求完成")
+    // 这里可以获取一个当前时间,减去之前的时间就是运行的时间(gin的中间件就是)
+    return res,err   // 客户端调用以上这些内容都会打印
+
+}
+
+------------------------grpc的客户端拦截器实现
+在grpc.Dial()之前:
+interceptor:=func(ctx context.Context,method string, req,reply interface{},cc *grpc.ClientConn,invoker grpc.UnaryInvoker,opts ...grpc.CallOption)err error{
+    // 拦截器逻辑
+    // 本次调用总共花多少时间
+
+    start:time.Now()
+    // 调用的逻辑
+    err:=involer(ctx,method,req,reply,cc,opts...)
+    // time.Since()从start到现在多长时间
+    fmt.Printf("时长总共%v",time.Since(start))
+    return err
+}
+opt:=grpc.WithUnaryInterceptor(interceptor)
+grpc.Dial("127.0.0.1:50051",grpc.WithInsecure(),opt)
+或者:
+var opts=[]grpc.DialOption
+opts=append(opts,grpc.WithInsecure())
+opts=append(opts,grpc.WithUnaryInterceptor(interceptor))
+//传递slice
+grpc.Dial("127.0.0.1:50051",opts)
+然后客户端运行,会打印出fmt.Printf("时长总共%v",time.Since(start))
+(总结,拦截器这些内容都会同意呗客户端使用,也就是拦截请求,做些拦截器的逻辑,而不影响调用的服务的逻辑)
+
+
+
+
+
+
+
+go-grpc-middleware库下有很多常见的拦截器功能
