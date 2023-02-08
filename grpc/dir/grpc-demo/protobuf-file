@@ -28,3 +28,87 @@ bytes   []byte    默认值是空的byte切片
 
 注意客户端和服务端的编码问题,如果内容对应的编号反了
 也就是服务端a=1 b=2客户端b=1 a=2那么解码时会由顺序与我们预想不一样的情况,所以要保证proto文件一致最好
+
+
+
+
+这个proto文件import另一个文件,比如使用message
+场景由message是共用的,不想重复写,而且重复写同个package下也有问题
+import "base.proto"   // 引入这个proto文件,同个路径下
+//引用google的proto
+import "google/protobuf/empty.proto"
+使用方式就是rpc ping(google.protobuf.Empty) returns()
+
+
+rpc ping(Empty) returns (pong)
+// 定义一个空的message,占位符的效果
+message Empty{
+
+}
+
+// 如果是用google的empty server和client应该怎么用
+"github.com/golang/protobuf/ptypes/empty"
+empty.Empty{}
+// google还提供可其他的proto文件
+
+
+-----------------message嵌套
+message Result{
+    string a=1;
+    string b=2;
+}
+message Test{
+    string aa=1;
+    repeated Result data=2;  // [] {}
+}
+
+
+// 代码中使用
+pb.Test_Result{}   // 实例化
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------enum枚举
+直接定义
+enum Gender{
+    MALE=0;
+    FEMALE=1;
+}
+
+然后message中
+message Test{
+    string a=1;
+    string b=2;
+    Gender g=3;
+}
+然后protoc生成:
+type Gender int32
+const (
+    Gender_MALE Gender=0;
+    Gender_FEMALE Gender=1;
+)
+
+代码中使用
+G(g):pb.Gender_MALE,(当然也可以使用常量比如100,但建议使用enum的枚举)
+枚举类型实际上就是不重复const()  go中也可以定义
