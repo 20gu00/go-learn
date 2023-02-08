@@ -112,3 +112,17 @@ const (
 代码中使用
 G(g):pb.Gender_MALE,(当然也可以使用常量比如100,但建议使用enum的枚举)
 枚举类型实际上就是不重复const()  go中也可以定义
+
+
+
+
+
+-------------------------------map
+message Test{
+    string a=1;
+    map<string,string> mp=2;   // key value
+}
+代码中使用:
+Mp:map[string]string{}
+
+
