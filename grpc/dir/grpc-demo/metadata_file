@@ -1,0 +1,34 @@
+有些信息比如token 用户名/密码通过metadata传递
+当然也可以写在message中,但是用metadata更好,就类似于http中header中的某些信息
+key-value形式 key string   value []string
+
+metadata使得client和server能够在本次调用中为对方提供些有用的信息,类似http的requestheader和responseheader
+和http请求一样,metadata只针对本次的调用
+
+
+实例化metadata:
+import "google.golang.org/grpc/metadata"
+md:=metadata.New(map[string]string{"k1":"v1","k2":"v2"}
+md:=metadata.Pairs{
+    // 不区分大小写全部转成小写
+    "k1":"v1",
+    "k1":"v10",   // k1值是[]string{"v1","v2"}
+    "k2":"v2,
+}
+
+根据这个metadata新建一个metadata的context
+ctx:=metadata.NewOutgoingContext(context.Backgroud(),md)
+
+客户端发送metadata
+res,err:=client.SomeRPC(ctx,someReq)
+
+
+服务端代码
+func (s *server) SomeRPC(ctx context.Context,in *pb.SomeRequest)(*pb.Response,err){
+    // 拿到metadata
+    md,err:=metadata.FromIncomingContext(ctx)
+    // 解析出来的metadata有很多key-value,可以根据自己的需求来过滤
+    // 根据metadata的key拿到的值是slice
+    return nil,nil
+}
+
