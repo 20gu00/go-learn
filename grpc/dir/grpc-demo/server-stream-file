@@ -1,0 +1,178 @@
+服务端的流模式:
+服务端远远不断返回数据给客户端
+
+
+syntax="proto3";
+option go_package="../pb;pb"
+service Svc{
+    rpc Getstream(StreamReqData) returns (stream StreamResData);  // 服务端流模式
+    rpc Pullstream(stream StreamReqData) returns (stream StreamResData);  // 双向流模式
+    rpc Allstream(stream StreamReqData) returns (StreamResData);  // 客户端流模式
+
+}
+message StreamReqData{
+    string a=1;
+}
+message StreamResData{
+    string a=1;
+}
+
+
+protoc生成相应的go文件
+1.编写server.go(服务端)
+----------------------
+// 实现上述的三个方法
+package main
+import ...
+type server struct{}
+const PORT = ":50052"
+// 一元调用模式
+//func (s *server)GetStream(ctx context.Context,req *pb.StreamReqData)(*pb.StreamResData,error){
+//    return nil.nil
+//}
+//服务端流模式 Svc_GetStreamServer自动生成
+func (s *server)GetStream(req *pb.StreamReqData,res *pb.Svc_GetStreamServer)error{
+    //源源不断返回数据
+    i:=0  //不断更改这个变量并返回
+    for {
+    i++
+    // 比如客户端关闭了连接,那么返回就由err
+        _=res.Send(&pb.StreamResData{
+            Data:fmt.Sprintf("%v",time.Now().Unix),  //返回当前的时间戳
+        })  // 调用一次,客户端就会立马收到一次
+        time.Sleep(1*time.Second)
+        if i>100{
+            break
+            }
+
+    }
+
+    return nil
+}
+//客户端流模式
+//其实就是服务端成了recv模式,客户端变成了send模式
+func (s *server)PullStream(clistr *pb.Svc_PullStreamServer)error{
+    for{
+        a,err:=clistr.Recv()
+        fmt.Println(a.Data)
+    }
+    return nil
+}
+//双向流模式
+func (s *server)AllStream(allstr *pb.Svc_AllStreamServer)error{
+    // send recv同时可以运行
+    // 客户端也是同样的代码实现
+    wg:=sync.waitgroup{}
+    wg.Add(2)
+    go func(){
+    defer wg.Done()
+    for {
+    allstr.Recv()
+    //业务逻辑
+    }}()
+    go func(){allstr.Send(&pb.StreamResData{Data:"test"})}()
+    wg.Wait()
+    return nil
+}
+func main(){
+    // tcp连接
+    lis,err:=net.Listen("tcp",PORT)
+    if err!=nil{...}
+    // grpc的server
+    s:=grpc.NewServer()
+    // 注册定义的service,注册进grpc server中   &server{}可以看到各种模式的写法,或者pb文件中的SvcServer这个interface下有方法的定义形式
+    pb.RegisterSvcServer(s,&server{})
+    err=s.Serve(lis)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2.客户端
+//服务端流模式的客户端编写
+package main
+import ...
+func main(){
+    // 建立和server的连接
+    conn,err:=grpc.Dial("localhost:50052",grpc.WithInsecure)
+    if err!=nil{...}
+    defer conn.Close()
+    // 新建这个service的client
+    c:=pb.NewSvcClient(conn)   // 也就是说proto文件和protoc在客户端和服务端都要做
+
+    // 开始实际调用远程方法,根据pb文件中的svcclient这个interface来写方法的形式
+    // 原本一元调用也就是远程方法return了才能接收到
+
+    //服务端流模式
+   res:=c.GetStream(context.Backgroud(),&pb.StreamReqData{Data:"req"})  //服务端发送一个我就接收一个知道服务端的方法return
+   for{
+        a,err:=res.Recv()  // 实际上就是socket编程中的send recv模式
+        if err!=nil{...}
+        fmt.Println(a)  // 完毕,启动server端即可,服务端结束会返回个EOF
+        }
+   }
+
+   //客户端流模式
+   putS,_:=c.PullStream(context.Backgroud())
+   i:=0
+   for{
+        i++
+        putS.Send(&pb.StreamReqData{
+            Data:fmt.Sprintf("%s","test")
+        }
+   }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//客户端刘模式的客户端编写
+package main
+import ...
+func main(){
+    // 建立和server的连接
+    conn,err:=grpc.Dial("localhost:50052",grpc.WithInsecure)
+    if err!=nil{...}
+    defer conn.Close()
+    // 新建这个service的client
+    c:=pb.NewSvcClient(conn)   // 也就是说proto文件和protoc在客户端和服务端都要做
+
+    // 开始实际调用远程方法,根据pb文件中的svcclient这个interface来写方法的形式
+    // 原本一元调用也就是远程方法return了才能接收到
+   res:=c.GetStream(context.Backgroud(),&pb.StreamReqData{Data:"req"})  //服务端发送一个我就接收一个知道服务端的方法return
+   for{
+        a,err:=res.Recv()  // 实际上就是socket编程中的send recv模式
+        if err!=nil{...}
+        fmt.Println(a)  // 完毕,启动server端即可,服务端结束会返回个EOF
+        }
+   }
+}
