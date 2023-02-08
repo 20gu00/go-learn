@@ -1,0 +1,25 @@
+message test{
+    string xxx=1;
+    int32 xxx=2;
+}
+
+
+
+
+数据类型:
+proto   go
+double  float64
+float   float32
+int32   int32
+uint32   uint32
+uint64   uint64
+sint32   int32   //变长编码,负值使用这个更好
+sint64   int64
+fixed32   uint32
+fixed64   uint64
+bool   bool   默认值是false
+string   string   默认值是空string
+bytes   []byte    默认值是空的byte切片
+数值类型默认值是0
+
+数组类型repeated string xxx=1;
