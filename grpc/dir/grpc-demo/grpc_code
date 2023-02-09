@@ -1,0 +1,14 @@
+grpc的错误码
+内置各种错误码 0123456789
+自动处理,不一定要手动处理
+
+往往自己定义错误码,也叫作业务错误码
+
+
+
+
+
+----------------------------错误处理
+status.New(codes.Code,msg string)
+status.Errorf(code,"xx%s",a)   format
+一般都是grpc服务端返回错误码
