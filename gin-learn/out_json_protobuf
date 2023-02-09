@@ -1,0 +1,16 @@
+输出json:
+c.JSON(http.StatusOK,gin.H{})
+
+
+c.JSON(http.StatusOK,struct)
+输出结构体时可以依据结构体的tag输出,如果不设置那么就是原本的字段名称
+
+
+
+输出protobuf:
+s:=pb.Test{
+    xxx,
+    // 可以是string也可以是[]string
+}
+c.ProtoBuf(http.StatusOK,s)
+前提是proto文件和protoc

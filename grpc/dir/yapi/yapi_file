@@ -1,0 +1,12 @@
+yapi
+docker一键快速部署 https://github.com/Ryan-Miao/docker-yapi
+可本地部署的、打通前后端及QA的、可视化的接口管理平台
+
+部署后主要就是yapi和mongo
+浏览器访问127.0.0.1:9090:
+数据库地址改成mongo
+数据库用户yapi
+数据库密码yapi123456
+根据提示部署和配置
+
+访问刚刚默认配置的3000   127.0.0.1:3000
