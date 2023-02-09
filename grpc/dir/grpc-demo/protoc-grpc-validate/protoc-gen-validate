@@ -1,0 +1,60 @@
+protoc-gen-validate:grpc的参数验证
+安装protoc-gen-validate:
+1.下载源码
+2.make build
+命令使用protoc是多一个参数  --validate_out="lang=go:."
+
+用法:
+proto文件中:
+import "validate/validate.proto";   // 准备validate目录,将源码中的validate.proto贴过来
+
+message Test{
+    uint64 id = 1 [(validate.rules).uint64.gt = 999]   // 大于
+}
+
+
+
+
+
+-----------------------------
+syntax = "proto3";
+
+package examplepb;
+
+import "validate/validate.proto";
+
+message Person {
+  uint64 id = 1 [(validate.rules).uint64.gt = 999];
+
+  string email = 2 [(validate.rules).string.email = true];   // 内置的email类型,传递的是email
+
+  string name = 3 [(validate.rules).string = {
+    pattern:   "^[^[0-9]A-Za-z]+( [^[0-9]A-Za-z]+)*$",   // 正则表达式
+    max_bytes: 256,   // 最大byte
+  }];
+
+  Location home = 4 [(validate.rules).message.required = true];   // 必填
+
+  message Location {
+    double lat = 1 [(validate.rules).double = {gte: -90,  lte: 90}];   // 两条规则 或 大于等于
+    double lng = 2 [(validate.rules).double = {gte: -180, lte: 180}];
+  }
+}
+
+
+
+
+
+
+
+手机号码规则:
+string mobile = 3 [(validate.rules).string = {
+    pattern:   "^1[23456789]\\d{9}$",   // 正则表达式
+    max_bytes: 256,   // 最大byte
+  }];
+
+后续就是写服务端和客户端
+常用包:
+google.golang.org/grpc/codes
+google.golang.org/grpc/status
+google.golang.org/grpc
