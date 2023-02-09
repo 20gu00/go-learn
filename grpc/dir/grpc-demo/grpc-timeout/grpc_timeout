@@ -1,0 +1,10 @@
+grpc超时机制
+--------------------客户端设置超时机制
+ctx,_:=context.WithTimeout(context.Background(),10*time.Second)
+然后调用方法时conn.SayHello(ctx,&pb.HelloRequest{})
+
+
+
+
+测试:
+服务端在SayHello函数中设置个timesleep一下再return
