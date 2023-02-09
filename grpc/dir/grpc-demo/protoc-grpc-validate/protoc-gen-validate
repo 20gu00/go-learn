@@ -44,12 +44,9 @@ message Person {
 
 
 
-
-
-
 手机号码规则:
 string mobile = 3 [(validate.rules).string = {
-    pattern:   "^1[23456789]\\d{9}$",   // 正则表达式
+    pattern:   "^1[3456789]\\d{9}$",   // 正则表达式 1开头然后3456789任选一个,剩下的九个数字中任选一个
     max_bytes: 256,   // 最大byte
   }];
 
@@ -58,3 +55,35 @@ string mobile = 3 [(validate.rules).string = {
 google.golang.org/grpc/codes
 google.golang.org/grpc/status
 google.golang.org/grpc
+
+
+server:
+type Validator interface{
+    Validate() error   // 这个方法在生成的xxx.pb.validate.go
+}
+main函数:
+前面:
+p:=new(pb.Person)
+// 设置   p.Id=1000   (满足大于999)(使用就这么简单)
+err:=p.Validate()
+if err!=nil{...}
+
+
+搭配拦截器使用:
+interceptor=func(...
+    // handler前:
+    // 这里也可以是pb.Person,实际上就是要用validat方法,但是拦截器有种全局的意思,如果是别的接口就不方便使用了
+    // 所以定义一个Validator interface
+    if r,ok:=req.(Validator);ok{
+        if err:=r.Validate();err!=nil{
+            return nil,status.Error(codes.InvalidArgument,err.Error())
+        }
+    }
+
+)
+
+
+client:
+没啥特别,就是调用函数的时候进行传参
+定义了规则那么默认就是必填的
+更多规则看项目的readme文件
