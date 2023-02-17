@@ -3,18 +3,25 @@ package main
 import "fmt"
 
 func main() {
+	// 留意超出容量会更换底层数据,但是append创建切片中,整体上看,依旧是共享数组
+	// append的参数可以是一个切片 ... 批量插入
 	s := []int{}
 	s = append(s, 1)
 	s = append(s, 2)
 	s = append(s, 3)
-	q := append(s, 4) //实际上就是s是[1,2,3],然后这里是新的切片,那么就是将s拷贝(深拷贝)值给q,然后对q在len(s)长度的地方也就是的3索引开始添加新的元素
-	w := append(s, 5)
-	r := append(q, 11)
+	q := append(s, 4)  //实际上就是s是[1,2,3],然后这里是新的切片,那么就是将s拷贝(深拷贝)值给q,然后对q在len(s)长度的地方也就是的3索引开始添加新的元素
+	w := append(s, 5)  // 同一个数组,修改那个位置,覆盖了元素
+	r := append(q, 11) //s,q,w同一个底层数组,r不是
 	fmt.Println("s:", s)
 	fmt.Println("q:", q)
 	fmt.Println("w:", w)
 	fmt.Println("r:", r)
 
+	s[0] = 1000
+	fmt.Println(s, q, w, r) //[1000 2 3] [1000 2 3 5] [1000 2 3 5] [1 2 3 5 11]
+
+	// 数组地址实际上就是第一个元素地址
+	// 这三个切片都指向了同一个数组,只是len有所不同,实际上切片就是struct,由pointer len cap
 	//s: [1 2 3]
 	//q: [1 2 3 5]
 	//w: [1 2 3 5]
