@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 func main() {
 	// 留意超出容量会更换底层数据,但是append创建切片中,整体上看,依旧是共享数组
@@ -92,6 +95,17 @@ func main() {
 	s4 := m1(s3)
 	fmt.Println("s4:", s4)
 	fmt.Println("s3:", s3)
+
+	// for range
+	fruits := []string{"a", "b", "c", "d", "e"}
+	for _, v := range fruits {
+		go func() {
+			fmt.Println(v) // e e e e e  因为for循环很可能已经执行已经执行完了,v是e,协程才打印
+		}()
+		//time.Sleep(1 * time.Second) a b c d e 阻塞一会,让协程运行完再继续for循环(不像defer,协程没有提前运算也就是副本)
+	}
+	time.Sleep(10 * time.Second)
+	//select{}
 	return
 }
 
