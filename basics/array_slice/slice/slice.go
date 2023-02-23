@@ -66,7 +66,7 @@ func main() {
 	fmt.Println(s4)
 	s4 = append(s4, 1, 2) //append操作切片，可能会使切片扩容，所以要让切片s4重新指向
 	fmt.Println(s4)
-	s4 = append(s4, 3, 4, 5, 6, 7)
+	s4 = append(s4, 3, 4, 5, 6, 7) // append(s4,[1,2,3,4,5]...)
 	fmt.Println(s4)
 
 	s4 = append(s4, s3...) //s3...表示这不是s3而是s3的元素(注意元素类型)
