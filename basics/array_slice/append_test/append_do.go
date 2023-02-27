@@ -106,12 +106,37 @@ func main() {
 	}
 	time.Sleep(10 * time.Second)
 	//select{}
+
+	aq := make([]int, 0, 20)
+	aq = append(aq, 1)
+	aq = append(aq, 2)
+	//am2 := m2(aq)
+	m2(aq)
+	//这是在底层数据添加了一个300,实际上覆盖了原有3,aq和m2的a这里都是300
+	aq = append(aq, 300)
+	//fmt.Println(am2)
+	fmt.Println(aq)
+
 	return
 }
 
 func m1(t []int) []int {
 	t[1] = 100
 	return t
+}
+
+//一句话总结：不管是值类型还是引用类型,除非使用指针,Go语言中的函数传参方式全部都是值传递，不存在引用传递。
+//函数里面通过索引号修改可以修改外部函数也就是原切片即底层数组的值,但是删除或者插入修改的是函数里面的切片而不是外部,也就是不影响原本的底层数组,环底层数组了
+//实际上就是struct拷贝,两个切片了
+//可以传递个指针,或者返回一个切片,不然就只有通过索引会影响外部的切片,所以外部的切片这时候不受影响len cap都不变,除非外部自己更改
+func m2(a []int) []int {
+	fmt.Println(len(a), cap(a)) //2 20
+	a = append(a, 3)
+	a = append(a, 4)
+	a[0] = 100
+	fmt.Println(len(a), cap(a)) // 4 20
+	fmt.Println("a", a)
+	return a
 }
 
 /*
