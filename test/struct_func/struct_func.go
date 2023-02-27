@@ -27,6 +27,9 @@ func (p People) GetName() string {
 func NewPeople(name string, age int) (p *People) {
 	p = new(People)
 	p.age = new(int) // int的指针
+	fmt.Println(p)
+	fmt.Println(*(p.age))
+	fmt.Println(p.name)
 	p.SetName(name)
 	p.SetAge(age)
 	return
@@ -37,4 +40,5 @@ func main() {
 	people.SetName("Grace")
 	people.SetAge(45)
 	fmt.Printf("%s,%d", people.GetName(), people.GetAge())
+	fmt.Println()
 }
