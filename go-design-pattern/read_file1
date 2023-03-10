@@ -31,3 +31,4 @@ go-design-pattern/开闭原则/main.go
 
 依赖倒转原则:依赖interface而不是依赖实现类,也就是针对接口编程
 设计一个系统时,三大模块,抽象层 实现层 业务逻辑层
+go-design-pattern/依赖倒转原则/main.go
