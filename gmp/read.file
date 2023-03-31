@@ -24,6 +24,29 @@ golang的线程调度器
 
 如果goroutine和thread一比一，那么线程的切换就要切换底层的thread，成本高，这就是内核级线程模型
 
-
+两级模型M:N，这时候瓶颈是线程调度器，就看线程调度器做的好不好，也就是一来调度器和算法的好坏
 
 一个进程会有一个主线程，由该线程继续开辟线程，进程获得固定大小的cpu和内存资源，由主线程往下分配
+
+
+
+go对线程的处理，goroutine概念，几KB，所以可以大量的goroutine，灵活调度，正常切换
+
+GMP:goroutine machine("物理"处理器，系统级线程thread，内核级，goroutine是用户级线程，从系统级线程这里获取cpu 内存等资源) processor(中间层，逻辑处理器，设置GOMAXPROCS)
+
+全局goroutine队列，P的goroutine队列
+
+启用一个goroutine去运行代码，如果没有空闲的goroutine就新建(go func())
+
+
+各个M通过操作系统调度器获得cpu 内存等
+P和M一一绑定，每个P有自己的goroutine队列(local P 本地队列)
+P拿出G到M中执行，或者说获得M的处理
+还有一个全局的goroutine队列
+一个P同一时间只能处理一个G，所以实际上微观上看，每一时间最高的并行量是GOMAXPROCS
+P的数目设置不是越多越好，考虑cpu的总的核数，P是程序运行的时候创建，一般是cpu的内核总数，也可以在程序中使用runtime包来设置(也可以在程序运行钱通过环境变量设置)
+local P队列一般最大256个G
+新创建的G会优先放到local P中，如果满了，才是全局队列
+go语言默认限制10000个M，操作系统很难支撑这样并行量(runtime/debug下的SetMaxThread函数设置，但是一般操作系统开不了这么多的并行量 系统线程)
+M是动态的，如果某个M阻塞，其实就是运行goroutine阻塞，会将整个P M G拿出来，也就是断开了local P队列，直到阻塞回复在继续加上local P运行。然后如果这个M拿开了，很可能会开启一个新的M
+如果有M空闲了一段时间，那么会回收M，所以gc和GMP调度模型是一块进行的
