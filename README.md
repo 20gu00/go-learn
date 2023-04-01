@@ -13,4 +13,5 @@
 10. go实现的OOP
 11. Gin框架的知识  
 12. kafka
-13. 博客链接https://mp.csdn.net/mp_blog/manage/column/allColumnList
+13. gc
+14. GMP
